@@ -1,9 +1,12 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
-import { format, addMinutes } from 'date-fns'
+import { useState, useRef } from 'react'
+import { format } from 'date-fns'
 import { usePlannerStore } from '@/lib/store/usePlannerStore'
-import { Play, Edit, Trash2 } from 'lucide-react'
+import { useTasks } from '@/lib/hooks/useTasks'
+import { useFocusStore } from '@/lib/store/useFocusStore'
+import { Play, Trash2, ChevronLeft, ChevronRight, Plus } from 'lucide-react'
+import TaskModal, { type TaskFormData } from './TaskModal'
 
 interface TimeSlot {
   hour: number
@@ -16,10 +19,15 @@ const START_HOUR = 6
 const END_HOUR = 26 // 2 AM next day
 
 export default function Timetable() {
-  const { tasks, selectedDate } = usePlannerStore()
+  const { tasks, selectedDate, setSelectedDate, isLoading } = usePlannerStore()
+  const { createTask, deleteTask: removeTask } = useTasks()
+  const { startSession } = useFocusStore()
+
   const [isCreating, setIsCreating] = useState(false)
   const [dragStart, setDragStart] = useState<{ y: number; time: string } | null>(null)
   const [dragEnd, setDragEnd] = useState<{ y: number; time: string } | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [modalTimeRange, setModalTimeRange] = useState<{ start: string; end: string } | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
   // Generate time slots
@@ -63,13 +71,48 @@ export default function Timetable() {
 
   const handleMouseUp = () => {
     if (isCreating && dragStart && dragEnd) {
-      // Calculate duration and create task
-      console.log('Create task from', dragStart.time, 'to', dragEnd.time)
-      // TODO: Open modal to input task details
+      // Open modal with time range
+      const startTime = dragStart.time
+      const endTime = dragEnd.time
+      setModalTimeRange({ start: startTime, end: endTime })
+      setIsModalOpen(true)
     }
     setIsCreating(false)
     setDragStart(null)
     setDragEnd(null)
+  }
+
+  const handleTaskSave = async (taskData: TaskFormData) => {
+    try {
+      await createTask({
+        ...taskData,
+        task_date: format(selectedDate, 'yyyy-MM-dd'),
+      })
+      setIsModalOpen(false)
+      setModalTimeRange(null)
+    } catch (error) {
+      console.error('Failed to create task:', error)
+    }
+  }
+
+  const handleStartFocus = (taskId: string) => {
+    startSession(taskId)
+  }
+
+  const handleDeleteTask = async (taskId: string) => {
+    if (confirm('이 작업을 삭제하시겠습니까?')) {
+      try {
+        await removeTask(taskId)
+      } catch (error) {
+        console.error('Failed to delete task:', error)
+      }
+    }
+  }
+
+  const navigateDate = (days: number) => {
+    const newDate = new Date(selectedDate)
+    newDate.setDate(newDate.getDate() + days)
+    setSelectedDate(newDate)
   }
 
   const getBlockStyle = (task: any) => {
@@ -101,12 +144,43 @@ export default function Timetable() {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6">
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-gray-900">
-          {format(selectedDate, 'yyyy년 MM월 dd일')}
-        </h2>
-      </div>
+    <>
+      <div className="bg-white rounded-lg shadow-lg p-6">
+        <div className="mb-4 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => navigateDate(-1)}
+              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+            <h2 className="text-2xl font-bold text-gray-900">
+              {format(selectedDate, 'yyyy년 MM월 dd일')}
+            </h2>
+            <button
+              onClick={() => navigateDate(1)}
+              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
+          </div>
+          <button
+            onClick={() => {
+              setModalTimeRange({ start: '09:00', end: '10:00' })
+              setIsModalOpen(true)
+            }}
+            className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+          >
+            <Plus className="w-5 h-5" />
+            작업 추가
+          </button>
+        </div>
+
+        {isLoading && (
+          <div className="flex items-center justify-center py-12">
+            <div className="text-gray-500">로딩 중...</div>
+          </div>
+        )}
 
       <div
         ref={containerRef}
@@ -116,7 +190,7 @@ export default function Timetable() {
         onMouseLeave={handleMouseUp}
       >
         {/* Time slots */}
-        {timeSlots.map((slot, index) => (
+        {timeSlots.map((slot) => (
           <div
             key={`${slot.hour}-${slot.minute}`}
             className="relative flex border-b border-gray-200 hover:bg-gray-50 cursor-pointer"
@@ -157,18 +231,14 @@ export default function Timetable() {
                   </div>
                   <div className="flex gap-1">
                     <button
+                      onClick={() => handleStartFocus(task.id)}
                       className="p-1.5 rounded hover:bg-white/50 transition-colors"
                       title="집중 시작"
                     >
                       <Play className="w-4 h-4" />
                     </button>
                     <button
-                      className="p-1.5 rounded hover:bg-white/50 transition-colors"
-                      title="수정"
-                    >
-                      <Edit className="w-4 h-4" />
-                    </button>
-                    <button
+                      onClick={() => handleDeleteTask(task.id)}
                       className="p-1.5 rounded hover:bg-white/50 transition-colors"
                       title="삭제"
                     >
@@ -191,6 +261,18 @@ export default function Timetable() {
           />
         )}
       </div>
-    </div>
+
+      <TaskModal
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false)
+          setModalTimeRange(null)
+        }}
+        onSave={handleTaskSave}
+        startTime={modalTimeRange?.start}
+        endTime={modalTimeRange?.end}
+      />
+      </div>
+    </>
   )
 }

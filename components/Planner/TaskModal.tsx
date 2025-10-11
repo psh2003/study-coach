@@ -96,9 +96,7 @@ export default function TaskModal({
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
             >
               {CATEGORIES.map((cat) => (
-                <key={cat}>
-                  <option value={cat}>{cat}</option>
-                </key>
+                <option key={cat} value={cat}>{cat}</option>
               ))}
             </select>
           </div>

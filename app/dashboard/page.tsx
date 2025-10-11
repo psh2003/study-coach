@@ -6,7 +6,7 @@ import { useAuth } from '@/lib/hooks/useAuth'
 import Timetable from '@/components/Planner/Timetable'
 import WebcamMonitor from '@/components/Focus/WebcamMonitor'
 import PomodoroTimer from '@/components/Focus/PomodoroTimer'
-import { Calendar, LogOut, Settings } from 'lucide-react'
+import { Calendar, LogOut, Settings, BarChart3 } from 'lucide-react'
 
 export default function DashboardPage() {
   const { user, isLoading, signOut } = useAuth()
@@ -43,6 +43,13 @@ export default function DashboardPage() {
               <span className="text-sm text-gray-600">
                 {user.user_metadata?.name || user.email}
               </span>
+              <button
+                onClick={() => router.push('/report')}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                title="리포트"
+              >
+                <BarChart3 className="w-5 h-5" />
+              </button>
               <button
                 onClick={() => router.push('/settings')}
                 className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
