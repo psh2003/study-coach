@@ -30,6 +30,8 @@
 html {
   scroll-behavior: smooth;
   cursor: none;
+  scroll-snap-type: y proximity;
+  overflow-y: scroll;
 }
 
 body {
