@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState, useRef } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useFocusStore } from '@/lib/store/useFocusStore'
 import { usePlannerStore } from '@/lib/store/usePlannerStore'
 import { useFocusSession } from '@/lib/hooks/useFocusSession'
@@ -119,28 +120,58 @@ export default function PomodoroTimer() {
 
   if (!isSessionActive) {
     return (
-      <div className="bg-white rounded-lg shadow-lg p-6">
-        <h3 className="text-lg font-bold mb-4">뽀모도로 타이머</h3>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+      >
+        <h3 className="text-xl font-bold mb-6 tracking-tight">POMODORO TIMER</h3>
         <div className="text-center py-8">
-          <Play className="w-16 h-16 mx-auto text-gray-400 mb-4" />
-          <p className="text-gray-600 mb-2">타임테이블에서</p>
-          <p className="text-gray-600">"집중 시작" 버튼을 눌러주세요</p>
+          <motion.div
+            animate={{
+              scale: [1, 1.1, 1],
+              opacity: [0.5, 1, 0.5],
+            }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          >
+            <Play className="w-16 h-16 mx-auto text-white/40 mb-4" />
+          </motion.div>
+          <p className="text-white/60 mb-2 font-light tracking-wide">SELECT A TASK FROM</p>
+          <p className="text-white/60 font-light tracking-wide">THE TIMETABLE</p>
         </div>
-      </div>
+      </motion.div>
     )
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6">
-      <div className="mb-4">
-        <h3 className="text-lg font-bold">
-          {isBreak ? '휴식 시간' : '집중 시간'}
-        </h3>
-        {currentTask && (
-          <p className="text-sm text-gray-600 mt-1">
-            {currentTask.title}
-          </p>
-        )}
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+    >
+      <div className="mb-6">
+        <motion.h3
+          key={isBreak ? 'break' : 'focus'}
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-xl font-bold tracking-tight"
+        >
+          {isBreak ? 'BREAK TIME' : 'FOCUS TIME'}
+        </motion.h3>
+        <AnimatePresence mode="wait">
+          {currentTask && (
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="text-sm text-white/60 mt-1 font-light tracking-wide"
+            >
+              {currentTask.title}
+            </motion.p>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* Circular progress */}
@@ -151,78 +182,126 @@ export default function PomodoroTimer() {
             cy="50%"
             r="45%"
             fill="none"
-            stroke="#e5e7eb"
+            stroke="rgba(255, 255, 255, 0.1)"
             strokeWidth="8"
           />
-          <circle
+          <motion.circle
             cx="50%"
             cy="50%"
             r="45%"
             fill="none"
-            stroke={isBreak ? '#10b981' : '#0ea5e9'}
+            stroke={isBreak ? '#10b981' : '#3b82f6'}
             strokeWidth="8"
             strokeDasharray={`${2 * Math.PI * 45}`}
             strokeDashoffset={`${2 * Math.PI * 45 * (1 - progress / 100)}`}
             strokeLinecap="round"
-            className="transition-all duration-1000"
+            initial={{ strokeDashoffset: `${2 * Math.PI * 45}` }}
+            animate={{ strokeDashoffset: `${2 * Math.PI * 45 * (1 - progress / 100)}` }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+            style={{
+              filter: `drop-shadow(0 0 8px ${isBreak ? '#10b981' : '#3b82f6'})`
+            }}
           />
         </svg>
 
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="text-center">
-            <div className="text-5xl font-bold text-gray-800">
+            <motion.div
+              key={timeRemaining}
+              initial={{ scale: 1.1, opacity: 0.8 }}
+              animate={{ scale: 1, opacity: 1 }}
+              className="text-5xl font-bold tracking-tight"
+            >
               {formatTime(timeRemaining)}
-            </div>
-            {isSessionActive && (
-              <div className="text-sm text-gray-500 mt-2">
-                {isPaused ? '일시정지' : isBreak ? '휴식 중' : '집중 중'}
-              </div>
-            )}
+            </motion.div>
+            <AnimatePresence mode="wait">
+              {isSessionActive && (
+                <motion.div
+                  key={isPaused ? 'paused' : isBreak ? 'break' : 'focus'}
+                  initial={{ opacity: 0, y: 5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -5 }}
+                  className="text-sm text-white/60 mt-2 font-light tracking-wider"
+                >
+                  {isPaused ? 'PAUSED' : isBreak ? 'BREAK' : 'FOCUSING'}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
       </div>
 
       {/* Controls */}
       <div className="flex gap-3">
-        <button
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           onClick={handlePauseResume}
           disabled={isSaving}
-          className="flex-1 py-3 bg-primary-600 text-white rounded-lg font-semibold hover:bg-primary-700 disabled:opacity-50 transition-colors flex items-center justify-center gap-2"
+          className="flex-1 py-3 glass-strong rounded-lg font-light hover:shadow-glow-md disabled:opacity-50 transition-all flex items-center justify-center gap-2 tracking-wider text-sm"
         >
-          {isPaused ? (
-            <>
-              <Play className="w-5 h-5" />
-              재개
-            </>
-          ) : (
-            <>
-              <Pause className="w-5 h-5" />
-              일시정지
-            </>
-          )}
-        </button>
+          <AnimatePresence mode="wait">
+            {isPaused ? (
+              <motion.div
+                key="play"
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.8, opacity: 0 }}
+                className="flex items-center gap-2"
+              >
+                <Play className="w-5 h-5" />
+                RESUME
+              </motion.div>
+            ) : (
+              <motion.div
+                key="pause"
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.8, opacity: 0 }}
+                className="flex items-center gap-2"
+              >
+                <Pause className="w-5 h-5" />
+                PAUSE
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.button>
 
-        <button
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           onClick={handleStop}
           disabled={isSaving}
-          className="px-4 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 disabled:opacity-50 transition-colors flex items-center justify-center gap-2"
+          className="px-4 py-3 bg-accent-green/20 border border-accent-green/30 text-accent-green rounded-lg font-light hover:bg-accent-green/30 disabled:opacity-50 transition-all flex items-center justify-center gap-2 tracking-wider text-sm"
         >
           {isSaving ? (
-            <span className="text-sm">저장 중...</span>
+            <motion.span
+              animate={{ opacity: [1, 0.5, 1] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
+            >
+              SAVING...
+            </motion.span>
           ) : (
             <>
               <CheckCircle className="w-5 h-5" />
-              <span className="text-sm">완료</span>
+              DONE
             </>
           )}
-        </button>
+        </motion.button>
       </div>
 
-      {absenceWarning && (
-        <div className="mt-4 p-3 bg-orange-50 border border-orange-200 rounded-lg text-orange-800 text-sm text-center">
-          자리를 비우셨네요. 타이머가 일시정지되었습니다.
-        </div>
-      )}
-    </div>
+      <AnimatePresence>
+        {absenceWarning && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="mt-4 p-3 glass-strong border border-accent-orange/30 rounded-lg text-accent-orange text-sm text-center font-light tracking-wide"
+          >
+            USER AWAY - TIMER PAUSED
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
   )
 }
