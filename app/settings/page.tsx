@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { useAuth } from '@/lib/hooks/useAuth'
-import { ArrowLeft, User, Bell, Palette, Database, Save } from 'lucide-react'
+import { ArrowLeft, User, Bell, Palette, Database, Save, Brain } from 'lucide-react'
 import { toast } from 'sonner'
 
 type Tab = 'profile' | 'preferences' | 'categories' | 'data'
@@ -14,6 +14,7 @@ export default function SettingsPage() {
   const router = useRouter()
   const [activeTab, setActiveTab] = useState<Tab>('profile')
   const [isSaving, setIsSaving] = useState(false)
+  const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 })
 
   // Profile settings
   const [name, setName] = useState('')
@@ -26,6 +27,14 @@ export default function SettingsPage() {
   const [soundEnabled, setSoundEnabled] = useState(true)
 
   useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setCursorPos({ x: e.clientX, y: e.clientY })
+    }
+    window.addEventListener('mousemove', handleMouseMove)
+    return () => window.removeEventListener('mousemove', handleMouseMove)
+  }, [])
+
+  useEffect(() => {
     if (!isLoading && !user) {
       router.push('/auth/login')
     } else if (user) {
@@ -36,17 +45,24 @@ export default function SettingsPage() {
 
   if (isLoading || !user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-lg text-gray-600">로딩중...</div>
+      <div className="min-h-screen bg-dark-primary flex items-center justify-center">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="text-center"
+        >
+          <div className="w-16 h-16 border-2 border-white/20 border-t-white rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-sm font-light tracking-wider text-white/60">LOADING</p>
+        </motion.div>
       </div>
     )
   }
 
   const tabs = [
-    { id: 'profile' as Tab, label: '프로필', icon: User },
-    { id: 'preferences' as Tab, label: '환경설정', icon: Bell },
-    { id: 'categories' as Tab, label: '카테고리 관리', icon: Palette },
-    { id: 'data' as Tab, label: '데이터 관리', icon: Database },
+    { id: 'profile' as Tab, label: 'PROFILE', icon: User },
+    { id: 'preferences' as Tab, label: 'PREFERENCES', icon: Bell },
+    { id: 'categories' as Tab, label: 'CATEGORIES', icon: Palette },
+    { id: 'data' as Tab, label: 'DATA', icon: Database },
   ]
 
   const handleSave = async () => {
@@ -54,278 +70,349 @@ export default function SettingsPage() {
     try {
       // TODO: Implement actual save logic with Supabase
       await new Promise(resolve => setTimeout(resolve, 1000))
-      toast.success('설정이 저장되었습니다')
+      toast.success('Settings saved successfully')
     } catch (error) {
-      toast.error('설정 저장에 실패했습니다')
+      toast.error('Failed to save settings')
     } finally {
       setIsSaving(false)
     }
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-purple-50 to-pink-50">
+    <div className="min-h-screen bg-dark-primary text-white relative overflow-hidden">
+      {/* Custom Cursor */}
+      <motion.div
+        className="fixed w-6 h-6 pointer-events-none z-50 mix-blend-difference hidden md:block"
+        animate={{
+          x: cursorPos.x - 12,
+          y: cursorPos.y - 12,
+        }}
+        transition={{
+          type: 'spring',
+          stiffness: 500,
+          damping: 28,
+        }}
+      >
+        <div className="w-full h-full rounded-full border border-white" />
+      </motion.div>
+
+      {/* Grid Background */}
+      <div className="fixed inset-0 grid-background opacity-30 pointer-events-none" />
+
+      {/* Gradient Orbs */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        <motion.div
+          animate={{
+            scale: [1, 1.2, 1],
+            opacity: [0.15, 0.25, 0.15],
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
+          className="absolute top-0 right-0 w-1/2 h-1/2 bg-accent-pink rounded-full blur-[120px]"
+        />
+        <motion.div
+          animate={{
+            scale: [1, 1.3, 1],
+            opacity: [0.15, 0.2, 0.15],
+          }}
+          transition={{
+            duration: 10,
+            repeat: Infinity,
+            ease: 'easeInOut',
+            delay: 1,
+          }}
+          className="absolute bottom-0 left-0 w-1/2 h-1/2 bg-accent-purple rounded-full blur-[120px]"
+        />
+      </div>
+
       {/* Header */}
-      <nav className="bg-white/80 backdrop-blur-md shadow-sm border-b sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4">
+      <nav className="fixed top-0 w-full z-40 glass-strong">
+        <div className="container mx-auto px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
-            <button
+            <motion.button
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
               onClick={() => router.push('/dashboard')}
-              className="flex items-center gap-2 text-gray-700 hover:text-gray-900 transition-colors"
+              className="flex items-center gap-3 glass p-3 rounded-lg hover:glass-strong transition-all"
             >
               <ArrowLeft className="w-5 h-5" />
-              <span className="font-medium">대시보드로 돌아가기</span>
-            </button>
+              <span className="text-sm font-light tracking-wider hidden sm:block">BACK</span>
+            </motion.button>
 
-            <button
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="flex items-center gap-3"
+            >
+              <Brain className="w-7 h-7" />
+              <span className="text-lg font-light tracking-[0.2em]">STUDY COACH</span>
+            </motion.div>
+
+            <motion.button
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
               onClick={handleSave}
               disabled={isSaving}
-              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-lg hover:from-primary-600 hover:to-primary-700 transition-all shadow-lg hover:shadow-xl disabled:opacity-50"
+              className="flex items-center gap-2 glass px-4 py-3 rounded-lg hover:glass-strong transition-all disabled:opacity-50"
             >
               <Save className="w-4 h-4" />
-              {isSaving ? '저장 중...' : '저장'}
-            </button>
+              <span className="text-sm font-light tracking-wider hidden sm:block">
+                {isSaving ? 'SAVING...' : 'SAVE'}
+              </span>
+            </motion.button>
           </div>
         </div>
       </nav>
 
       {/* Main Content */}
-      <div className="container mx-auto px-4 py-8">
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="mb-8"
-        >
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">설정</h1>
-          <p className="text-gray-600">앱 환경을 커스터마이징하세요</p>
-        </motion.div>
-
-        <div className="grid lg:grid-cols-4 gap-6">
-          {/* Sidebar Tabs */}
+      <main className="relative pt-32 pb-12 px-6 lg:px-8">
+        <div className="container mx-auto max-w-[1400px]">
+          {/* Page Header */}
           <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="lg:col-span-1"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-12"
           >
-            <div className="bg-white rounded-2xl shadow-lg p-4 border border-gray-100">
-              {tabs.map((tab) => (
-                <motion.button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`
-                    w-full flex items-center gap-3 px-4 py-3 rounded-xl mb-2 transition-all
-                    ${activeTab === tab.id
-                      ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg'
-                      : 'text-gray-600 hover:bg-gray-50'
-                    }
-                  `}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <tab.icon className="w-5 h-5" />
-                  <span className="font-medium">{tab.label}</span>
-                </motion.button>
-              ))}
-            </div>
+            <h1 className="text-5xl lg:text-7xl font-bold tracking-tight mb-3">
+              YOUR<br />
+              <span className="gradient-text italic font-light">SETTINGS</span>
+            </h1>
+            <p className="text-sm font-light text-white/60 tracking-wider">
+              CUSTOMIZE YOUR EXPERIENCE
+            </p>
           </motion.div>
 
-          {/* Content Area */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="lg:col-span-3"
-          >
-            <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
-              {/* Profile Tab */}
-              {activeTab === 'profile' && (
-                <div>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-6">프로필 설정</h2>
+          <div className="grid lg:grid-cols-4 gap-6">
+            {/* Sidebar Tabs */}
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.2 }}
+              className="lg:col-span-1"
+            >
+              <div className="glass rounded-2xl p-4">
+                {tabs.map((tab, index) => (
+                  <motion.button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.3 + index * 0.1 }}
+                    className={`
+                      w-full flex items-center gap-3 px-4 py-3 rounded-xl mb-2 transition-all font-light tracking-wider text-sm
+                      ${activeTab === tab.id
+                        ? 'glass-strong shadow-glow-md'
+                        : 'hover:glass-strong'
+                      }
+                    `}
+                  >
+                    <tab.icon className="w-5 h-5" />
+                    <span>{tab.label}</span>
+                  </motion.button>
+                ))}
+              </div>
+            </motion.div>
 
-                  <div className="space-y-6">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        이름
-                      </label>
-                      <input
-                        type="text"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
-                        placeholder="이름을 입력하세요"
-                      />
-                    </div>
+            {/* Content Area */}
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.3 }}
+              className="lg:col-span-3"
+            >
+              <div className="glass rounded-2xl p-6 lg:p-8 hover-glow">
+                {/* Profile Tab */}
+                {activeTab === 'profile' && (
+                  <div>
+                    <h2 className="text-3xl font-bold mb-8 tracking-tight">PROFILE SETTINGS</h2>
 
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        이메일
-                      </label>
-                      <input
-                        type="email"
-                        value={email}
-                        disabled
-                        className="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 text-gray-500 cursor-not-allowed"
-                      />
-                      <p className="text-sm text-gray-500 mt-1">이메일은 변경할 수 없습니다</p>
-                    </div>
+                    <div className="space-y-6">
+                      <div>
+                        <label className="block text-sm font-light text-white/60 mb-2 tracking-wider">
+                          NAME
+                        </label>
+                        <input
+                          type="text"
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                          className="w-full px-4 py-3 glass-strong rounded-xl border border-white/10 focus:border-accent-blue transition-all font-light bg-transparent text-white placeholder-white/30"
+                          placeholder="Enter your name"
+                        />
+                      </div>
 
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        프로필 사진
-                      </label>
-                      <div className="flex items-center gap-4">
-                        <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white text-2xl font-bold">
-                          {name.charAt(0).toUpperCase() || 'U'}
+                      <div>
+                        <label className="block text-sm font-light text-white/60 mb-2 tracking-wider">
+                          EMAIL
+                        </label>
+                        <input
+                          type="email"
+                          value={email}
+                          disabled
+                          className="w-full px-4 py-3 glass rounded-xl border border-white/10 bg-white/5 text-white/40 cursor-not-allowed font-light"
+                        />
+                        <p className="text-sm text-white/40 mt-2 font-light">Email cannot be changed</p>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-light text-white/60 mb-2 tracking-wider">
+                          PROFILE PICTURE
+                        </label>
+                        <div className="flex items-center gap-4">
+                          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-accent-blue to-accent-purple flex items-center justify-center text-white text-2xl font-bold">
+                            {name.charAt(0).toUpperCase() || 'U'}
+                          </div>
+                          <button className="px-4 py-2 glass-strong rounded-lg hover:shadow-glow-sm transition-all text-sm font-light tracking-wider">
+                            CHANGE PHOTO
+                          </button>
                         </div>
-                        <button className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
-                          사진 변경
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Preferences Tab */}
+                {activeTab === 'preferences' && (
+                  <div>
+                    <h2 className="text-3xl font-bold mb-8 tracking-tight">PREFERENCES</h2>
+
+                    <div className="space-y-6">
+                      <div>
+                        <label className="block text-sm font-light text-white/60 mb-2 tracking-wider">
+                          FOCUS DURATION (MINUTES)
+                        </label>
+                        <input
+                          type="number"
+                          value={focusDuration}
+                          onChange={(e) => setFocusDuration(Number(e.target.value))}
+                          min="15"
+                          max="60"
+                          step="5"
+                          className="w-full px-4 py-3 glass-strong rounded-xl border border-white/10 focus:border-accent-blue transition-all font-light bg-transparent text-white"
+                        />
+                        <p className="text-sm text-white/40 mt-2 font-light">Recommended: 25 minutes</p>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-light text-white/60 mb-2 tracking-wider">
+                          BREAK DURATION (MINUTES)
+                        </label>
+                        <input
+                          type="number"
+                          value={breakDuration}
+                          onChange={(e) => setBreakDuration(Number(e.target.value))}
+                          min="5"
+                          max="15"
+                          step="1"
+                          className="w-full px-4 py-3 glass-strong rounded-xl border border-white/10 focus:border-accent-blue transition-all font-light bg-transparent text-white"
+                        />
+                        <p className="text-sm text-white/40 mt-2 font-light">Recommended: 5 minutes</p>
+                      </div>
+
+                      <div className="flex items-center justify-between p-4 glass-strong rounded-xl">
+                        <div>
+                          <h3 className="font-light tracking-wide">NOTIFICATIONS</h3>
+                          <p className="text-sm text-white/60 font-light">Alert when focus ends</p>
+                        </div>
+                        <button
+                          onClick={() => setNotificationsEnabled(!notificationsEnabled)}
+                          className={`
+                            relative w-14 h-8 rounded-full transition-colors
+                            ${notificationsEnabled ? 'bg-accent-blue' : 'bg-white/20'}
+                          `}
+                        >
+                          <div className={`
+                            absolute top-1 left-1 w-6 h-6 bg-white rounded-full transition-transform
+                            ${notificationsEnabled ? 'translate-x-6' : 'translate-x-0'}
+                          `} />
+                        </button>
+                      </div>
+
+                      <div className="flex items-center justify-between p-4 glass-strong rounded-xl">
+                        <div>
+                          <h3 className="font-light tracking-wide">SOUND</h3>
+                          <p className="text-sm text-white/60 font-light">Play sound on timer end</p>
+                        </div>
+                        <button
+                          onClick={() => setSoundEnabled(!soundEnabled)}
+                          className={`
+                            relative w-14 h-8 rounded-full transition-colors
+                            ${soundEnabled ? 'bg-accent-blue' : 'bg-white/20'}
+                          `}
+                        >
+                          <div className={`
+                            absolute top-1 left-1 w-6 h-6 bg-white rounded-full transition-transform
+                            ${soundEnabled ? 'translate-x-6' : 'translate-x-0'}
+                          `} />
                         </button>
                       </div>
                     </div>
                   </div>
-                </div>
-              )}
+                )}
 
-              {/* Preferences Tab */}
-              {activeTab === 'preferences' && (
-                <div>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-6">환경 설정</h2>
+                {/* Categories Tab */}
+                {activeTab === 'categories' && (
+                  <div>
+                    <h2 className="text-3xl font-bold mb-8 tracking-tight">CATEGORY MANAGEMENT</h2>
+                    <p className="text-white/60 mb-6 font-light tracking-wide">Add or modify study categories</p>
 
-                  <div className="space-y-6">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        집중 시간 (분)
-                      </label>
-                      <input
-                        type="number"
-                        value={focusDuration}
-                        onChange={(e) => setFocusDuration(Number(e.target.value))}
-                        min="15"
-                        max="60"
-                        step="5"
-                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
-                      />
-                      <p className="text-sm text-gray-500 mt-1">권장: 25분</p>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        휴식 시간 (분)
-                      </label>
-                      <input
-                        type="number"
-                        value={breakDuration}
-                        onChange={(e) => setBreakDuration(Number(e.target.value))}
-                        min="5"
-                        max="15"
-                        step="1"
-                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
-                      />
-                      <p className="text-sm text-gray-500 mt-1">권장: 5분</p>
-                    </div>
-
-                    <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-                      <div>
-                        <h3 className="font-medium text-gray-900">알림 활성화</h3>
-                        <p className="text-sm text-gray-500">집중 시간 종료 시 알림</p>
-                      </div>
-                      <button
-                        onClick={() => setNotificationsEnabled(!notificationsEnabled)}
-                        className={`
-                          relative w-14 h-8 rounded-full transition-colors
-                          ${notificationsEnabled ? 'bg-primary-500' : 'bg-gray-300'}
-                        `}
-                      >
-                        <div className={`
-                          absolute top-1 left-1 w-6 h-6 bg-white rounded-full transition-transform
-                          ${notificationsEnabled ? 'translate-x-6' : 'translate-x-0'}
-                        `} />
-                      </button>
-                    </div>
-
-                    <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-                      <div>
-                        <h3 className="font-medium text-gray-900">알림음 활성화</h3>
-                        <p className="text-sm text-gray-500">타이머 종료 시 소리</p>
-                      </div>
-                      <button
-                        onClick={() => setSoundEnabled(!soundEnabled)}
-                        className={`
-                          relative w-14 h-8 rounded-full transition-colors
-                          ${soundEnabled ? 'bg-primary-500' : 'bg-gray-300'}
-                        `}
-                      >
-                        <div className={`
-                          absolute top-1 left-1 w-6 h-6 bg-white rounded-full transition-transform
-                          ${soundEnabled ? 'translate-x-6' : 'translate-x-0'}
-                        `} />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Categories Tab */}
-              {activeTab === 'categories' && (
-                <div>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-6">카테고리 관리</h2>
-                  <p className="text-gray-600 mb-6">학습 카테고리를 추가하거나 수정하세요</p>
-
-                  <div className="space-y-4">
-                    {['수학', '영어', '과학', '기타'].map((category) => (
-                      <div key={category} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-                        <span className="font-medium text-gray-900">{category}</span>
-                        <div className="flex gap-2">
-                          <button className="px-3 py-1 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm">
-                            편집
-                          </button>
-                          <button className="px-3 py-1 bg-red-50 text-red-600 border border-red-200 rounded-lg hover:bg-red-100 transition-colors text-sm">
-                            삭제
-                          </button>
+                    <div className="space-y-4">
+                      {['MATH', 'ENGLISH', 'SCIENCE', 'OTHER'].map((category) => (
+                        <div key={category} className="flex items-center justify-between p-4 glass-strong rounded-xl">
+                          <span className="font-light tracking-wider">{category}</span>
+                          <div className="flex gap-2">
+                            <button className="px-3 py-1 glass rounded-lg hover:glass-strong transition-all text-sm font-light tracking-wider">
+                              EDIT
+                            </button>
+                            <button className="px-3 py-1 bg-accent-pink/20 text-accent-pink border border-accent-pink/30 rounded-lg hover:bg-accent-pink/30 transition-all text-sm font-light tracking-wider">
+                              DELETE
+                            </button>
+                          </div>
                         </div>
+                      ))}
+
+                      <button className="w-full py-3 border-2 border-dashed border-white/20 rounded-xl text-white/60 hover:border-accent-blue hover:text-accent-blue transition-all font-light tracking-wider">
+                        + ADD CATEGORY
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Data Tab */}
+                {activeTab === 'data' && (
+                  <div>
+                    <h2 className="text-3xl font-bold mb-8 tracking-tight">DATA MANAGEMENT</h2>
+
+                    <div className="space-y-4">
+                      <div className="p-6 glass-strong border border-accent-blue/30 rounded-xl">
+                        <h3 className="font-bold text-accent-blue mb-2 tracking-wide">EXPORT DATA</h3>
+                        <p className="text-sm text-white/60 mb-4 font-light">
+                          Export all your study data as CSV file
+                        </p>
+                        <button className="px-4 py-2 bg-accent-blue rounded-lg hover:bg-accent-blue/80 transition-colors font-light tracking-wider text-sm">
+                          DOWNLOAD CSV
+                        </button>
                       </div>
-                    ))}
 
-                    <button className="w-full py-3 border-2 border-dashed border-gray-300 rounded-xl text-gray-600 hover:border-primary-400 hover:text-primary-600 transition-colors">
-                      + 카테고리 추가
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {/* Data Tab */}
-              {activeTab === 'data' && (
-                <div>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-6">데이터 관리</h2>
-
-                  <div className="space-y-4">
-                    <div className="p-6 bg-blue-50 border border-blue-200 rounded-xl">
-                      <h3 className="font-bold text-blue-900 mb-2">데이터 내보내기</h3>
-                      <p className="text-sm text-blue-700 mb-4">
-                        모든 학습 데이터를 CSV 파일로 내보낼 수 있습니다
-                      </p>
-                      <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                        CSV 다운로드
-                      </button>
-                    </div>
-
-                    <div className="p-6 bg-red-50 border border-red-200 rounded-xl">
-                      <h3 className="font-bold text-red-900 mb-2">계정 삭제</h3>
-                      <p className="text-sm text-red-700 mb-4">
-                        계정을 삭제하면 모든 데이터가 영구적으로 삭제됩니다
-                      </p>
-                      <button className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
-                        계정 삭제
-                      </button>
+                      <div className="p-6 glass-strong border border-accent-pink/30 rounded-xl">
+                        <h3 className="font-bold text-accent-pink mb-2 tracking-wide">DELETE ACCOUNT</h3>
+                        <p className="text-sm text-white/60 mb-4 font-light">
+                          Permanently delete your account and all data
+                        </p>
+                        <button className="px-4 py-2 bg-accent-pink rounded-lg hover:bg-accent-pink/80 transition-colors font-light tracking-wider text-sm">
+                          DELETE ACCOUNT
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              )}
-            </div>
-          </motion.div>
+                )}
+              </div>
+            </motion.div>
+          </div>
         </div>
-      </div>
+      </main>
     </div>
   )
 }
