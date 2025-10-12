@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Brain, ArrowRight, Target, Clock, TrendingUp, Eye, Zap, BarChart, Shield, Users, Sparkles } from 'lucide-react'
 import AOS from 'aos'
-import 'aos/dist/aos.css'
 
 export default function Home() {
   const router = useRouter()
