@@ -180,9 +180,9 @@ export default function Home() {
 
 // Hero Section Component
 function HeroSection({ router, smoothProgress }: any) {
-  const opacity = useTransform(smoothProgress, [0, 0.2], [1, 0])
-  const y = useTransform(smoothProgress, [0, 0.2], [0, -100])
-  const scale = useTransform(smoothProgress, [0, 0.2], [1, 0.8])
+  const opacity = useTransform(smoothProgress, [0, 0.12], [1, 0])
+  const y = useTransform(smoothProgress, [0, 0.12], [0, -100])
+  const scale = useTransform(smoothProgress, [0, 0.12], [1, 0.8])
 
   return (
     <motion.section
@@ -285,9 +285,9 @@ function HeroSection({ router, smoothProgress }: any) {
 
 // Features Section Component
 function FeaturesSection({ smoothProgress }: any) {
-  const opacity = useTransform(smoothProgress, [0.15, 0.25, 0.4, 0.5], [0, 1, 1, 0])
-  const scale = useTransform(smoothProgress, [0.15, 0.25, 0.4, 0.5], [0.8, 1, 1, 0.8])
-  const y = useTransform(smoothProgress, [0.15, 0.25], [100, 0])
+  const opacity = useTransform(smoothProgress, [0.1, 0.15, 0.3, 0.35], [0, 1, 1, 0])
+  const scale = useTransform(smoothProgress, [0.1, 0.15, 0.3, 0.35], [0.8, 1, 1, 0.8])
+  const y = useTransform(smoothProgress, [0.1, 0.15], [100, 0])
 
   const features = [
     {
@@ -387,8 +387,8 @@ function FeaturesSection({ smoothProgress }: any) {
 
 // How It Works Section Component
 function HowItWorksSection({ smoothProgress }: any) {
-  const opacity = useTransform(smoothProgress, [0.45, 0.55, 0.65, 0.7], [0, 1, 1, 0])
-  const scale = useTransform(smoothProgress, [0.45, 0.55], [0.9, 1])
+  const opacity = useTransform(smoothProgress, [0.32, 0.38, 0.5, 0.55], [0, 1, 1, 0])
+  const scale = useTransform(smoothProgress, [0.32, 0.38], [0.9, 1])
 
   return (
     <motion.section
@@ -457,7 +457,7 @@ function HowItWorksSection({ smoothProgress }: any) {
 
 // Benefits Section Component
 function BenefitsSection({ smoothProgress }: any) {
-  const opacity = useTransform(smoothProgress, [0.65, 0.75, 0.85, 0.9], [0, 1, 1, 0])
+  const opacity = useTransform(smoothProgress, [0.52, 0.58, 0.68, 0.72], [0, 1, 1, 0])
 
   return (
     <motion.section
@@ -534,8 +534,8 @@ function BenefitsSection({ smoothProgress }: any) {
 
 // Stats Section Component
 function StatsSection({ smoothProgress }: any) {
-  const opacity = useTransform(smoothProgress, [0.75, 0.8, 0.9, 0.95], [0, 1, 1, 0])
-  const scale = useTransform(smoothProgress, [0.75, 0.8], [0.8, 1])
+  const opacity = useTransform(smoothProgress, [0.68, 0.72, 0.8, 0.84], [0, 1, 1, 0])
+  const scale = useTransform(smoothProgress, [0.68, 0.72], [0.8, 1])
 
   return (
     <motion.section
@@ -577,7 +577,7 @@ function StatsSection({ smoothProgress }: any) {
 
 // Testimonials Section Component
 function TestimonialsSection({ smoothProgress }: any) {
-  const opacity = useTransform(smoothProgress, [0.8, 0.85, 0.95, 1], [0, 1, 1, 0])
+  const opacity = useTransform(smoothProgress, [0.8, 0.84, 0.92, 0.96], [0, 1, 1, 0])
 
   return (
     <motion.section
@@ -650,8 +650,8 @@ function TestimonialsSection({ smoothProgress }: any) {
 
 // Final CTA Section Component
 function CTASection({ router, smoothProgress }: any) {
-  const opacity = useTransform(smoothProgress, [0.9, 0.95, 1], [0, 1, 1])
-  const scale = useTransform(smoothProgress, [0.9, 0.95], [0.8, 1])
+  const opacity = useTransform(smoothProgress, [0.92, 0.96, 1], [0, 1, 1])
+  const scale = useTransform(smoothProgress, [0.92, 0.96], [0.8, 1])
 
   return (
     <motion.section
