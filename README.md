@@ -17,19 +17,19 @@ AI 컴퓨터 비전 기술을 활용하여 사용자의 학습 및 업무 습관
 - **집중 세션 연동**: 각 블록에서 바로 집중 모드 시작
 
 ### 3. AI 집중 세션 (FCS-300)
-- **실시간 웹캠 모니터링**: MediaPipe를 활용한 자세 분석
-- **자세 교정**: 거북목 자세 10초 이상 감지 시 알림
-- **스마트폰 감지**: 휴대폰 5초 이상 감지 시 경고
-- **자리 비움 감지**: 15초 이상 인식 불가 시 타이머 자동 일시정지
-- **뽀모도로 타이머**: 25분 집중 + 5분 휴식 사이클
-- **방해 요소 기록**: 모든 방해 이벤트를 타임스탬프와 함께 저장
+- **실시간 웹캠 모니터링**: MediaPipe를 활용한 다중 감지 시스템
+- **자세 교정**: 거북목 자세 감지 시 알림
+- **졸음 감지**: 눈 감김(Eyes Closed) 감지 시 경고 및 타이머 일시정지
+- **스마트폰 감지**: 학습 중 스마트폰 사용 감지
+- **자리 비움 감지**: 사용자 부재 시 타이머 자동 일시정지 및 웹캠 자동 종료
+- **뽀모도로 타이머**: 25분 집중 + 5분 휴식 사이클 (커스텀 가능)
+- **방해 요소 기록**: 졸음, 자세, 스마트폰, 자리비움 등 모든 방해 이벤트를 기록
 
 ### 4. 학습 통계 및 리포트 (RPT-400)
-- 기간별(일별/주별/월별) 통계 조회
-- 총 집중 시간 시각화
-- 계획 대비 실제 성취도 분석
-- 방해 요인 분포 분석
-- 과목별 집중도 비교
+- 기간별(일별/주별/월별) 통계 조회 (주간: 월요일 시작)
+- 총 집중 시간 및 세션 수 시각화
+- 집중 성공률 분석 (세션 당 방해 횟수 기반)
+- 방해 요인 분포 및 과목별 집중도 분석
 
 ## 기술 스택
 
@@ -38,7 +38,7 @@ AI 컴퓨터 비전 기술을 활용하여 사용자의 학습 및 업무 습관
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS
 - **State Management**: Zustand
-- **Icons**: Lucide React
+- **Icons**: Lucide React, Material Symbols
 
 ### Backend
 - **BaaS**: Supabase
@@ -47,13 +47,15 @@ AI 컴퓨터 비전 기술을 활용하여 사용자의 학습 및 업무 습관
 - **API**: Supabase Auto-generated APIs
 
 ### AI/ML
-- **Pose Detection**: TensorFlow.js + MediaPipe Pose
-- **Object Detection**: TensorFlow.js + COCO-SSD
-- **Framework**: @tensorflow-models/pose-detection, @tensorflow-models/coco-ssd
+- **Vision Tasks**: MediaPipe Tasks Vision
+  - **FaceLandmarker**: 졸음(눈 감김) 감지
+  - **PoseLandmarker**: 자세(거북목) 및 부재 감지
+  - **ObjectDetector**: 스마트폰 감지
+- **Performance**: Optimized for real-time web execution
 
 ### Utilities
 - **Date Handling**: date-fns
-- **Charts**: Recharts (for statistics)
+- **Charts**: Recharts
 
 ## 시작하기
 
@@ -100,11 +102,10 @@ npm run dev
 study-coach/
 ├── app/                          # Next.js App Router
 │   ├── auth/                     # 인증 페이지
-│   │   ├── login/
-│   │   └── register/
+│   │   └── login/                # 로그인/회원가입 통합
 │   ├── dashboard/                # 메인 대시보드
 │   ├── report/                   # 통계 리포트
-│   ├── settings/                 # 설정
+│   ├── settings/                 # 설정 (현재 미사용)
 │   ├── layout.tsx
 │   ├── page.tsx                  # 랜딩 페이지
 │   └── globals.css
@@ -115,12 +116,12 @@ study-coach/
 │   │   └── TaskModal.tsx
 │   └── Focus/                    # 집중 세션 관련
 │       ├── WebcamMonitor.tsx
-│       └── PomodoroTimer.tsx
+│       └── FullScreenTimer.tsx
 │
 ├── lib/                          # 유틸리티 및 로직
-│   ├── ai/                       # AI 모듈
-│   │   ├── useWebcam.ts          # 웹캠 Hook
-│   │   ├── poseProcessor.ts      # 자세 분석
+│   ├── ai/                       # AI 모듈 (MediaPipe)
+│   │   ├── faceProcessor.ts      # 얼굴/졸음 분석
+│   │   ├── poseProcessor.ts      # 자세/부재 분석
 │   │   └── objectDetector.ts     # 객체 탐지
 │   ├── store/                    # Zustand 스토어
 │   │   ├── useAuthStore.ts
@@ -130,7 +131,12 @@ study-coach/
 │   │   ├── client.ts
 │   │   ├── database.types.ts
 │   │   └── schema.sql
+│   ├── repositories/             # 데이터 접근 계층
+│   │   ├── focusRepository.ts
+│   │   ├── statsRepository.ts
+│   │   └── taskRepository.ts
 │   └── hooks/                    # Custom Hooks
+│       ├── useAIMonitoring.ts
 │       └── useAuth.ts
 │
 ├── public/                       # 정적 파일
