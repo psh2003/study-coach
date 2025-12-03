@@ -21,12 +21,12 @@ export default function CategoryChart({ data }: CategoryChartProps) {
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5, delay: 0.4 }}
-      className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100"
+      className="bg-[#1A1A1A]/50 rounded-2xl shadow-lg p-6 border border-[#A3A3A3]/10"
     >
-      <h3 className="text-lg font-bold text-gray-900 mb-6">과목별 집중도</h3>
+      <h3 className="text-lg font-bold text-[#F5F5F5] mb-6">과목별 집중도</h3>
 
       {chartData.length === 0 ? (
-        <div className="flex items-center justify-center h-64 text-gray-400">
+        <div className="flex items-center justify-center h-64 text-[#A3A3A3]">
           데이터가 없습니다
         </div>
       ) : (
@@ -42,25 +42,36 @@ export default function CategoryChart({ data }: CategoryChartProps) {
                 <stop offset="100%" stopColor="#f87171" stopOpacity={0.6} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+            <CartesianGrid strokeDasharray="3 3" stroke="#A3A3A3" opacity={0.1} />
             <XAxis
               dataKey="카테고리"
-              stroke="#6b7280"
+              stroke="#A3A3A3"
               style={{ fontSize: '12px' }}
             />
             <YAxis
-              stroke="#6b7280"
+              stroke="#A3A3A3"
               style={{ fontSize: '12px' }}
             />
             <Tooltip
+              cursor={{ fill: 'rgba(163, 163, 163, 0.1)' }}
               contentStyle={{
-                backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                border: 'none',
+                backgroundColor: 'rgba(26, 26, 26, 0.95)',
+                border: '1px solid rgba(163, 163, 163, 0.1)',
                 borderRadius: '12px',
-                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.3)',
+                color: '#F5F5F5',
+              }}
+              itemStyle={{ color: '#F5F5F5' }}
+            />
+            <Legend
+              verticalAlign="bottom"
+              height={36}
+              iconType="circle"
+              wrapperStyle={{
+                fontSize: '14px',
+                color: '#F5F5F5'
               }}
             />
-            <Legend />
             <Bar
               dataKey="집중 시간"
               fill="url(#focusGradient)"

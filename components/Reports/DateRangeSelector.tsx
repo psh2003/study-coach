@@ -17,8 +17,8 @@ export default function DateRangeSelector({ selectedRange, onRangeChange }: Date
   ]
 
   return (
-    <div className="flex items-center gap-2 bg-white rounded-xl shadow-md p-2 border border-gray-100">
-      <Calendar className="w-5 h-5 text-gray-400 ml-2" />
+    <div className="flex items-center gap-2 bg-[#1A1A1A]/50 rounded-xl shadow-md p-2 border border-[#A3A3A3]/10">
+      <Calendar className="w-5 h-5 text-[#A3A3A3] ml-2" />
 
       <div className="flex gap-1">
         {ranges.map((range) => (
@@ -29,7 +29,7 @@ export default function DateRangeSelector({ selectedRange, onRangeChange }: Date
               relative px-4 py-2 rounded-lg font-medium text-sm transition-colors
               ${selectedRange === range.value
                 ? 'text-white'
-                : 'text-gray-600 hover:text-gray-900'
+                : 'text-[#A3A3A3] hover:text-[#F5F5F5]'
               }
             `}
             whileHover={{ scale: 1.05 }}

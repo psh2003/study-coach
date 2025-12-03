@@ -136,56 +136,53 @@ export default function Timetable() {
 
   const getCategoryColor = (category: string | null) => {
     const colors: Record<string, string> = {
-      '수학': 'bg-accent-blue/20 border-accent-blue text-accent-blue',
-      '영어': 'bg-accent-green/20 border-accent-green text-accent-green',
-      '과학': 'bg-accent-purple/20 border-accent-purple text-accent-purple',
-      '기타': 'bg-white/10 border-white/30 text-white/80',
+      '수학': 'bg-[#0D0D0D] border-[#52FF86] text-[#F5F5F5] shadow-[0_0_15px_0px_rgba(82,255,134,0.3)]',
+      '영어': 'bg-[#0D0D0D] border-[#E140E1] text-[#F5F5F5] shadow-[0_0_15px_0px_rgba(225,64,225,0.3)]',
+      '과학': 'bg-[#0D0D0D] border-rose-400 text-[#F5F5F5]',
+      '기타': 'bg-[#0D0D0D] border-[#52FF86] text-[#F5F5F5] shadow-[0_0_15px_0px_rgba(82,255,134,0.3)]',
     }
     return colors[category || '기타'] || colors['기타']
   }
 
   return (
     <>
-      <div className="relative">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-6 flex items-center justify-between"
-        >
-          <div className="flex items-center gap-4">
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => navigateDate(-1)}
-              className="p-2 glass rounded-lg hover:glass-strong transition-all"
+      <div className="flex flex-col gap-4 h-full">
+        <h2 className="text-xl font-bold text-[#F5F5F5]">오늘의 시간표</h2>
+        <div className="bg-[#1A1A1A]/50 p-4 rounded-lg border border-[#A3A3A3]/10 h-full flex flex-col">
+          {/* Header */}
+          <div className="flex items-center justify-between pb-4">
+            <div className="flex items-center gap-2">
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => navigateDate(-1)}
+                className="p-1 hover:bg-[#1A1A1A] rounded transition-colors"
+              >
+                <ChevronLeft className="w-4 h-4 text-[#A3A3A3]" />
+              </motion.button>
+              <p className="text-[#F5F5F5] text-base font-bold leading-tight">
+                {format(selectedDate, 'EEEE, MMM d', { locale: undefined })}
+              </p>
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => navigateDate(1)}
+                className="p-1 hover:bg-[#1A1A1A] rounded transition-colors"
+              >
+                <ChevronRight className="w-4 h-4 text-[#A3A3A3]" />
+              </motion.button>
+            </div>
+            <button
+              onClick={() => {
+                setModalTimeRange({ start: '09:00', end: '10:00' })
+                setIsModalOpen(true)
+              }}
+              className="flex items-center gap-2 text-sm text-[#52FF86] hover:text-[#52FF86]/80 transition-colors font-medium"
             >
-              <ChevronLeft className="w-5 h-5" />
-            </motion.button>
-            <h2 className="text-2xl font-bold tracking-tight">
-              {format(selectedDate, 'yyyy년 MM월 dd일')}
-            </h2>
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => navigateDate(1)}
-              className="p-2 glass rounded-lg hover:glass-strong transition-all"
-            >
-              <ChevronRight className="w-5 h-5" />
-            </motion.button>
+              <span className="material-symbols-outlined text-base">add_circle</span>
+              New Block
+            </button>
           </div>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => {
-              setModalTimeRange({ start: '09:00', end: '10:00' })
-              setIsModalOpen(true)
-            }}
-            className="flex items-center gap-2 px-4 py-2 glass-strong rounded-lg hover:shadow-glow-md transition-all font-light tracking-wider text-sm"
-          >
-            <Plus className="w-5 h-5" />
-            ADD TASK
-          </motion.button>
-        </motion.div>
 
         {isLoading && (
           <motion.div
@@ -193,122 +190,142 @@ export default function Timetable() {
             animate={{ opacity: 1 }}
             className="flex items-center justify-center py-12"
           >
-            <div className="text-white/60 font-light tracking-wider">LOADING...</div>
+            <div className="text-[#A3A3A3] font-light tracking-wider">LOADING...</div>
           </motion.div>
         )}
 
-      <motion.div
-        ref={containerRef}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.2 }}
-        className="relative border border-white/10 rounded-lg glass overflow-hidden"
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseUp}
-      >
-        {/* Time slots */}
-        {timeSlots.map((slot, index) => (
-          <motion.div
-            key={`${slot.hour}-${slot.minute}`}
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: index * 0.01 }}
-            className="relative flex border-b border-white/5 hover:bg-white/5 cursor-pointer transition-colors"
-            style={{ height: `${SLOT_HEIGHT}px` }}
-            onMouseDown={(e) => handleMouseDown(e, slot.label)}
-          >
-            <div className="w-20 flex-shrink-0 px-4 py-2 text-sm font-light text-white/60 border-r border-white/10">
-              {slot.label}
-            </div>
-            <div className="flex-1 relative">
-              {/* Empty slot for dragging */}
-            </div>
-          </motion.div>
-        ))}
-
-        {/* Task blocks */}
-        <AnimatePresence>
-          {tasks
-            .filter((task) => task.start_time && task.end_time)
-            .map((task, index) => {
-              const style = getBlockStyle(task)
-              const colorClass = getCategoryColor(task.category)
+      {/* Timetable */}
+      <div className="flex-1 overflow-y-auto pr-2 relative">
+        <div
+          ref={containerRef}
+          className="relative"
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
+        >
+          {/* Time Grid */}
+          <div>
+            {timeSlots.map((slot, index) => {
+              // Only show hour labels (not 30-minute marks)
+              const showLabel = slot.minute === 0
+              const displayHour = slot.hour >= 24 ? slot.hour - 24 : slot.hour
+              const isPM = displayHour >= 12
+              const displayHour12 = displayHour === 0 ? 12 : displayHour > 12 ? displayHour - 12 : displayHour
+              const timeLabel = `${displayHour12} ${isPM ? 'PM' : 'AM'}`
 
               return (
-                <motion.div
-                  key={task.id}
-                  initial={{ opacity: 0, scale: 0.9, x: -20 }}
-                  animate={{ opacity: 1, scale: 1, x: 0 }}
-                  exit={{ opacity: 0, scale: 0.9, x: 20 }}
-                  transition={{ delay: index * 0.05 }}
-                  whileHover={{ scale: 1.02, x: 4 }}
-                  className={`absolute left-20 right-4 border-l-4 rounded-r-lg p-3 ${colorClass} cursor-pointer backdrop-blur-sm`}
-                  style={style}
+                <div
+                  key={`${slot.hour}-${slot.minute}`}
+                  className="h-[60px] flex"
+                  data-time={slot.label}
+                  onMouseDown={(e) => handleMouseDown(e, slot.label)}
                 >
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-semibold text-sm truncate">{task.title}</h4>
-                      {task.category && (
-                        <span className="text-xs opacity-75 font-light">{task.category}</span>
-                      )}
-                      <div className="text-xs mt-1 opacity-75 font-light">
-                        Est: {task.est_time}m | Actual: {task.actual_time}m
-                      </div>
-                    </div>
-                    <div className="flex gap-1">
-                      <motion.button
-                        whileHover={{ scale: 1.2 }}
-                        whileTap={{ scale: 0.9 }}
-                        onClick={() => handleStartFocus(task.id)}
-                        className="p-1.5 rounded hover:bg-white/20 transition-colors"
-                        title="Start Focus"
-                      >
-                        <Play className="w-4 h-4" />
-                      </motion.button>
-                      <motion.button
-                        whileHover={{ scale: 1.2 }}
-                        whileTap={{ scale: 0.9 }}
-                        onClick={() => handleDeleteTask(task.id)}
-                        className="p-1.5 rounded hover:bg-white/20 transition-colors"
-                        title="Delete"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </motion.button>
-                    </div>
+                  <div className="w-12 text-right pr-2 pt-[-4px] text-xs text-[#A3A3A3]">
+                    {showLabel ? timeLabel : ''}
                   </div>
-                </motion.div>
+                  <div className="flex-1 border-t border-[#A3A3A3]/10 cursor-pointer hover:bg-[#1A1A1A]/30 transition-colors"></div>
+                </div>
               )
             })}
-        </AnimatePresence>
+          </div>
 
-        {/* Drag preview */}
-        <AnimatePresence>
-          {isCreating && dragStart && dragEnd && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 0.5 }}
-              exit={{ opacity: 0 }}
-              className="absolute left-20 right-4 bg-accent-blue/30 border-l-4 border-accent-blue rounded-r-lg pointer-events-none backdrop-blur-sm"
-              style={{
-                top: `${Math.min(dragStart.y, dragEnd.y)}px`,
-                height: `${Math.abs(dragEnd.y - dragStart.y)}px`,
-              }}
-            />
-          )}
-        </AnimatePresence>
-      </motion.div>
+          {/* Study Blocks */}
+          <div className="absolute inset-0 pl-12">
+            <AnimatePresence>
+              {tasks
+                .filter((task) => task.start_time && task.end_time)
+                .map((task, index) => {
+                  const style = getBlockStyle(task)
+                  const colorClass = getCategoryColor(task.category)
+                  const categoryColor = task.category === '영어' ? '#E140E1' : task.category === '과학' ? 'rgb(251, 113, 133)' : '#52FF86'
 
-      <TaskModal
-        isOpen={isModalOpen}
-        onClose={() => {
-          setIsModalOpen(false)
-          setModalTimeRange(null)
-        }}
-        onSave={handleTaskSave}
-        startTime={modalTimeRange?.start}
-        endTime={modalTimeRange?.end}
-      />
+                  return (
+                    <motion.div
+                      key={task.id}
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.9 }}
+                      transition={{ delay: index * 0.05 }}
+                      className="absolute w-full"
+                      style={style}
+                    >
+                      <div className={`h-full ml-2 mr-1 p-2 rounded-lg border-l-4 ${colorClass} cursor-pointer group hover:opacity-80 transition-all`}>
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex-1 min-w-0">
+                            <p className="font-bold text-sm text-[#F5F5F5]">{task.title}</p>
+                            {task.category && (
+                              <p className="text-xs" style={{ color: categoryColor }}>
+                                {task.category}
+                              </p>
+                            )}
+                          </div>
+                          <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <motion.button
+                              whileHover={{ scale: 1.2 }}
+                              whileTap={{ scale: 0.9 }}
+                              onClick={() => handleStartFocus(task.id)}
+                              className="p-1 rounded hover:bg-white/20 transition-colors"
+                              title="Start Focus"
+                            >
+                              <Play className="w-3 h-3" />
+                            </motion.button>
+                            <motion.button
+                              whileHover={{ scale: 1.2 }}
+                              whileTap={{ scale: 0.9 }}
+                              onClick={() => handleDeleteTask(task.id)}
+                              className="p-1 rounded hover:bg-white/20 transition-colors"
+                              title="Delete"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                            </motion.button>
+                          </div>
+                        </div>
+                        <div className="absolute bottom-1 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <div className="w-4 h-2 rounded-full bg-[#F5F5F5]/50"></div>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )
+                })}
+            </AnimatePresence>
+
+            {/* Drag preview - matching HTML template dashed block style */}
+            <AnimatePresence>
+              {isCreating && dragStart && dragEnd && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="absolute w-full ml-2 mr-1"
+                  style={{
+                    top: `${Math.min(dragStart.y, dragEnd.y)}px`,
+                    height: `${Math.abs(dragEnd.y - dragStart.y)}px`,
+                  }}
+                >
+                  <div className="h-full p-2 rounded-lg bg-[#52FF86]/20 border-2 border-dashed border-[#52FF86] flex items-center justify-center">
+                    <p className="text-xs text-[#52FF86] font-medium">
+                      {dragStart.time} - {dragEnd.time}
+                    </p>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </div>
+      </div>
+
+        </div>
+
+        <TaskModal
+          isOpen={isModalOpen}
+          onClose={() => {
+            setIsModalOpen(false)
+            setModalTimeRange(null)
+          }}
+          onSave={handleTaskSave}
+          startTime={modalTimeRange?.start}
+          endTime={modalTimeRange?.end}
+        />
       </div>
     </>
   )

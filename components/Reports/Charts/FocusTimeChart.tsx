@@ -21,9 +21,9 @@ export default function FocusTimeChart({ data }: FocusTimeChartProps) {
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5, delay: 0.2 }}
-      className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100"
+      className="bg-[#1A1A1A]/50 rounded-2xl shadow-lg p-6 border border-[#A3A3A3]/10"
     >
-      <h3 className="text-lg font-bold text-gray-900 mb-6">일별 집중 시간</h3>
+      <h3 className="text-lg font-bold text-[#F5F5F5] mb-6">일별 집중 시간</h3>
 
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={chartData}>
@@ -33,24 +33,27 @@ export default function FocusTimeChart({ data }: FocusTimeChartProps) {
               <stop offset="100%" stopColor="#60a5fa" stopOpacity={0.6} />
             </linearGradient>
           </defs>
-          <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+          <CartesianGrid strokeDasharray="3 3" stroke="#A3A3A3" opacity={0.1} />
           <XAxis
             dataKey="date"
-            stroke="#6b7280"
+            stroke="#A3A3A3"
             style={{ fontSize: '12px' }}
           />
           <YAxis
-            stroke="#6b7280"
+            stroke="#A3A3A3"
             style={{ fontSize: '12px' }}
-            label={{ value: '시간 (h)', angle: -90, position: 'insideLeft' }}
+            label={{ value: '시간 (h)', angle: -90, position: 'insideLeft', fill: '#A3A3A3' }}
           />
           <Tooltip
+            cursor={{ fill: 'rgba(163, 163, 163, 0.1)' }}
             contentStyle={{
-              backgroundColor: 'rgba(255, 255, 255, 0.95)',
-              border: 'none',
+              backgroundColor: 'rgba(26, 26, 26, 0.95)',
+              border: '1px solid rgba(163, 163, 163, 0.1)',
               borderRadius: '12px',
-              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.3)',
+              color: '#F5F5F5',
             }}
+            itemStyle={{ color: '#F5F5F5' }}
             formatter={(value: number, name: string) => {
               if (name === '시간') {
                 return [`${value}시간`, name]

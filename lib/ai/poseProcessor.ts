@@ -1,115 +1,141 @@
-import * as poseDetection from '@tensorflow-models/pose-detection'
-import '@tensorflow/tfjs-backend-webgl'
+import {
+  PoseLandmarker,
+  FilesetResolver,
+  DrawingUtils,
+  PoseLandmarkerResult,
+  NormalizedLandmark
+} from '@mediapipe/tasks-vision'
 
-export interface PoseLandmark {
-  x: number
-  y: number
-  z?: number
-  score?: number
-}
+export class PoseProcessor {
+  private poseLandmarker: PoseLandmarker | null = null
+  private isLoaded = false
 
-export interface Pose {
-  keypoints: poseDetection.Keypoint[]
-  score?: number
-}
-
-class PoseProcessor {
-  private detector: poseDetection.PoseDetector | null = null
-  private isInitialized = false
-
-  async initialize() {
-    if (this.isInitialized) return
-
+  async load() {
     try {
-      const model = poseDetection.SupportedModels.MoveNet
-      this.detector = await poseDetection.createDetector(model, {
-        modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING,
+      const vision = await FilesetResolver.forVisionTasks(
+        'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/wasm'
+      )
+
+      this.poseLandmarker = await PoseLandmarker.createFromOptions(vision, {
+        baseOptions: {
+          modelAssetPath: `https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task`,
+          delegate: 'GPU'
+        },
+        runningMode: 'VIDEO',
+        numPoses: 1,
+        minPoseDetectionConfidence: 0.5,
+        minPosePresenceConfidence: 0.5,
+        minTrackingConfidence: 0.5,
       })
-      this.isInitialized = true
-      console.log('Pose detector initialized')
+
+      this.isLoaded = true
+      console.log('MediaPipe PoseLandmarker loaded successfully')
     } catch (error) {
-      console.error('Failed to initialize pose detector:', error)
+      console.error('Failed to load PoseLandmarker:', error)
       throw error
     }
   }
 
-  async detectPose(videoElement: HTMLVideoElement): Promise<Pose | null> {
-    if (!this.detector || !this.isInitialized) {
-      await this.initialize()
-    }
+  detectPose(video: HTMLVideoElement, timestamp: number): PoseLandmarkerResult | null {
+    if (!this.isLoaded || !this.poseLandmarker) return null
 
     try {
-      const poses = await this.detector!.estimatePoses(videoElement)
-      return poses.length > 0 ? poses[0] : null
+      const result = this.poseLandmarker.detectForVideo(video, timestamp)
+      return result
     } catch (error) {
       console.error('Error detecting pose:', error)
       return null
     }
   }
 
-  /**
-   * Detect turtle neck posture (forward head posture)
-   * Returns true if neck is extended forward significantly
-   */
-  isTurtleNeck(pose: Pose): boolean {
-    if (!pose.keypoints) return false
+  isTurtleNeck(result: PoseLandmarkerResult | null): boolean {
+    if (!result || !result.landmarks || result.landmarks.length === 0) return false
 
-    // Get nose and shoulder keypoints
-    const nose = pose.keypoints.find((kp) => kp.name === 'nose')
-    const leftShoulder = pose.keypoints.find((kp) => kp.name === 'left_shoulder')
-    const rightShoulder = pose.keypoints.find((kp) => kp.name === 'right_shoulder')
+    const landmarks = result.landmarks[0]
 
-    if (!nose || !leftShoulder || !rightShoulder) return false
+    // MediaPipe Pose Landmarks:
+    // 7: left ear, 8: right ear
+    // 11: left shoulder, 12: right shoulder
 
-    // Check confidence scores
-    if (
-      (nose.score || 0) < 0.5 ||
-      (leftShoulder.score || 0) < 0.5 ||
-      (rightShoulder.score || 0) < 0.5
-    ) {
-      return false
-    }
+    const leftEar = landmarks[7]
+    const rightEar = landmarks[8]
+    const leftShoulder = landmarks[11]
+    const rightShoulder = landmarks[12]
 
-    // Calculate average shoulder position
-    const avgShoulderX = (leftShoulder.x + rightShoulder.x) / 2
-    const avgShoulderY = (leftShoulder.y + rightShoulder.y) / 2
+    // Check visibility/presence (optional, depending on needs)
+    // if (leftEar.visibility < 0.5 || ...) return false
 
-    // Calculate horizontal distance between nose and shoulders
-    const horizontalDistance = Math.abs(nose.x - avgShoulderX)
+    // Calculate midpoints
+    const earY = (leftEar.y + rightEar.y) / 2
+    const shoulderY = (leftShoulder.y + rightShoulder.y) / 2
 
-    // Calculate vertical distance
-    const verticalDistance = Math.abs(nose.y - avgShoulderY)
+    // Calculate distance (simple heuristic)
+    // In normalized coordinates (0-1), larger Y means lower on screen
+    // If ear is too close to shoulder vertically, it might indicate turtle neck (head forward/down)
+    // Or if ear X is far ahead of shoulder X (requires side view, hard with webcam)
 
-    // If nose is significantly forward of shoulders (poor posture)
-    // Threshold can be adjusted based on testing
-    const threshold = 0.15 // 15% of frame width
+    // For front webcam: 
+    // Turtle neck usually involves head coming forward and down relative to shoulders.
+    // This reduces the vertical distance between ears and shoulders in 2D projection.
 
-    return horizontalDistance / videoElement.videoWidth > threshold
+    const verticalDistance = Math.abs(shoulderY - earY)
+
+    // Threshold needs tuning. 
+    // Normal posture: distance is larger.
+    // Turtle neck/Slouching: distance is smaller.
+    // This is very dependent on camera angle and distance.
+    // Let's use a conservative threshold for now.
+
+    return verticalDistance < 0.15 // Heuristic value
   }
 
-  /**
-   * Detect if user is absent (no person detected)
-   */
-  isPersonAbsent(pose: Pose | null): boolean {
-    if (!pose) return true
+  isPersonAbsent(result: PoseLandmarkerResult | null): boolean {
+    // If no result or no landmarks detected
+    if (!result || !result.landmarks || result.landmarks.length === 0) {
+      // If detection fails completely, we might assume absence, 
+      // BUT to be safe (as per previous user request), we should be lenient.
+      // However, if the model runs but finds nothing, that IS absence.
+      // Let's check if we have ANY landmarks.
+      return true
+    }
 
-    // Check if enough keypoints are detected with good confidence
-    const validKeypoints = pose.keypoints.filter(
-      (kp) => (kp.score || 0) > 0.3
-    )
+    const landmarks = result.landmarks[0]
 
-    // If less than 5 keypoints detected, consider person absent
-    return validKeypoints.length < 5
+    // Check if we have enough visible landmarks
+    // MediaPipe usually returns all 33 landmarks, but some might have low visibility/presence?
+    // Actually NormalizedLandmark has x, y, z, visibility.
+
+    // Filter by visibility/presence if available (PoseLandmarker might not populate visibility in all models, but usually does)
+    // Let's assume visibility > 0.1 as "visible" (very lenient)
+
+    // const visibleLandmarks = landmarks.filter(lm => (lm.visibility ?? 1) > 0.1)
+
+    // If very few landmarks are visible, consider absent
+    // if (visibleLandmarks.length < 2) return true
+
+    // Just check if we have landmarks at all. If the model returns landmarks, it found a pose.
+    if (landmarks.length < 5) return true // Arbitrary low number, usually it returns 33
+
+    // Check for shoulders specifically for extra safety
+    const leftShoulder = landmarks[11]
+    const rightShoulder = landmarks[12]
+
+    const hasShoulder = (leftShoulder.visibility ?? 1) > 0.1 || (rightShoulder.visibility ?? 1) > 0.1
+
+    // If we see a shoulder, they are definitely present
+    if (hasShoulder) return false
+
+    // If we see enough other points but no shoulder (e.g. face only), they are present
+    return false
   }
 
   dispose() {
-    if (this.detector) {
-      this.detector.dispose()
-      this.detector = null
-      this.isInitialized = false
+    if (this.poseLandmarker) {
+      this.poseLandmarker.close()
+      this.poseLandmarker = null
     }
+    this.isLoaded = false
   }
 }
 
-// Singleton instance
 export const poseProcessor = new PoseProcessor()

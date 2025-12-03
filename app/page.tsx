@@ -1,698 +1,168 @@
 'use client'
 
-import { useEffect, useState, useRef } from 'react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { motion, useScroll, useTransform, useSpring } from 'framer-motion'
-import { Brain, ArrowRight, Target, Clock, TrendingUp, Eye, Zap, BarChart, Shield, Users, Sparkles } from 'lucide-react'
 
 export default function Home() {
   const router = useRouter()
-  const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 })
-  const containerRef = useRef<HTMLDivElement>(null)
-
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ['start start', 'end end']
-  })
-
-  const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: 100,
-    damping: 30,
-    restDelta: 0.001
-  })
-
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      setCursorPos({ x: e.clientX, y: e.clientY })
-    }
-    window.addEventListener('mousemove', handleMouseMove)
-    return () => window.removeEventListener('mousemove', handleMouseMove)
-  }, [])
 
   return (
-    <div ref={containerRef} className="relative bg-dark-primary text-white">
-      {/* Custom Cursor */}
-      <motion.div
-        className="fixed w-6 h-6 pointer-events-none z-50 mix-blend-difference"
-        animate={{
-          x: cursorPos.x - 12,
-          y: cursorPos.y - 12,
-        }}
-        transition={{
-          type: 'spring',
-          stiffness: 500,
-          damping: 28,
-        }}
-      >
-        <div className="w-full h-full rounded-full border-2 border-white" />
-      </motion.div>
-
-      {/* Animated Gradient Orbs Background */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <motion.div
-          animate={{
-            scale: [1, 1.2, 1],
-            opacity: [0.15, 0.25, 0.15],
-          }}
-          transition={{
-            duration: 8,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
-          className="absolute -top-1/4 -right-1/4 w-1/2 h-1/2 bg-accent-blue rounded-full blur-[120px]"
-        />
-        <motion.div
-          animate={{
-            scale: [1, 1.3, 1],
-            opacity: [0.1, 0.2, 0.1],
-          }}
-          transition={{
-            duration: 10,
-            repeat: Infinity,
-            ease: 'easeInOut',
-            delay: 2,
-          }}
-          className="absolute top-1/2 -left-1/4 w-1/2 h-1/2 bg-accent-purple rounded-full blur-[120px]"
-        />
-        <motion.div
-          animate={{
-            scale: [1, 1.15, 1],
-            opacity: [0.08, 0.15, 0.08],
-          }}
-          transition={{
-            duration: 12,
-            repeat: Infinity,
-            ease: 'easeInOut',
-            delay: 4,
-          }}
-          className="absolute -bottom-1/4 right-1/3 w-1/2 h-1/2 bg-accent-pink rounded-full blur-[120px]"
-        />
-      </div>
-
-      {/* Fixed Navigation */}
-      <motion.nav
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.8, ease: 'easeOut' }}
-        className="fixed top-0 w-full z-40 backdrop-blur-md bg-dark-primary/80 border-b border-white/5"
-      >
-        <div className="container mx-auto px-8 py-6">
-          <div className="flex items-center justify-between">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-              className="flex items-center gap-3"
-            >
-              <Brain className="w-8 h-8 text-accent-blue" />
-              <span className="text-xl font-bold tracking-wider gradient-text">STUDY COACH</span>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
-              className="flex gap-6 text-sm font-light tracking-wider"
-            >
-              <button
-                onClick={() => router.push('/auth/login')}
-                className="hover:text-accent-blue transition-colors"
-              >
-                LOGIN
-              </button>
-              <button
-                onClick={() => router.push('/auth/register')}
-                className="px-6 py-2 glass hover:glass-strong transition-all hover:shadow-glow-sm"
-              >
-                START FREE
-              </button>
-            </motion.div>
+    <div className="relative flex h-auto min-h-screen w-full flex-col overflow-x-hidden bg-[#080808] text-white font-display">
+      {/* Header */}
+      <header className="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#242447] px-10 py-3 fixed top-0 left-0 right-0 z-50 bg-[#080808]/80 backdrop-blur-sm">
+        <div className="flex items-center gap-4 text-white">
+          <div className="text-primary">
+            <span className="material-symbols-outlined" style={{ fontSize: '24px' }}>auto_awesome</span>
           </div>
+          <h2 className="text-white text-lg font-bold leading-tight tracking-[-0.015em]">Study Coach</h2>
         </div>
-      </motion.nav>
+        <div className="flex flex-1 justify-end gap-8">
+          <div className="hidden md:flex items-center gap-9">
+            <a className="text-white text-sm font-medium leading-normal hover:text-primary transition-colors" href="#features">Features</a>
+            <a className="text-white text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">About</a>
+            <a className="text-white text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Pricing</a>
+          </div>
+          <button
+            onClick={() => router.push('/auth/login?view=signup')}
+            className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition-colors"
+          >
+            <span className="truncate">Sign Up</span>
+          </button>
+        </div>
+      </header>
 
-      {/* Scroll Progress Indicator */}
-      <motion.div
-        className="fixed top-0 left-0 right-0 h-1 bg-accent-blue origin-left z-50"
-        style={{ scaleX: smoothProgress }}
-      />
-
-      {/* Hero Section - Full Screen with Scroll Snap */}
-      <HeroSection router={router} smoothProgress={smoothProgress} />
-
-      {/* Features Section */}
-      <FeaturesSection smoothProgress={smoothProgress} />
-
-      {/* How It Works Section */}
-      <HowItWorksSection smoothProgress={smoothProgress} />
-
-      {/* Benefits Section */}
-      <BenefitsSection smoothProgress={smoothProgress} />
-
-      {/* Stats Section */}
-      <StatsSection smoothProgress={smoothProgress} />
-
-      {/* Testimonials Section */}
-      <TestimonialsSection smoothProgress={smoothProgress} />
-
-      {/* Final CTA Section */}
-      <CTASection router={router} smoothProgress={smoothProgress} />
-
-      {/* Footer */}
-      <footer className="border-t border-white/5 py-12 bg-dark-primary">
-        <div className="container mx-auto px-8">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6 text-sm font-light text-white/40">
-            <div className="flex items-center gap-3">
-              <Brain className="w-6 h-6 text-accent-blue" />
-              <span>© 2025 STUDY COACH. All rights reserved.</span>
-            </div>
-            <div className="flex gap-8">
-              <a href="#" className="hover:text-accent-blue transition-colors">Privacy Policy</a>
-              <a href="#" className="hover:text-accent-blue transition-colors">Terms of Service</a>
-              <a href="#" className="hover:text-accent-blue transition-colors">Contact</a>
+      <main className="mt-20">
+        {/* Hero Section */}
+        <div className="px-4 md:px-10 py-5">
+          <div className="@container">
+            <div className="@[480px]:p-4">
+              <div className="flex min-h-[calc(100vh-120px)] flex-col gap-6 bg-cover bg-center bg-no-repeat @[480px]:gap-8 items-center justify-center p-4 relative">
+                <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1593349480504-802c09f38e38?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')] bg-cover bg-center opacity-20"></div>
+                <div className="flex flex-col gap-2 text-center z-10">
+                  <h1 className="text-white text-4xl md:text-6xl font-black leading-tight tracking-tighter">
+                    Unlock Your Full Potential with AI-Powered Study Habits.
+                  </h1>
+                  <h2 className="text-[#eaeaea] text-base md:text-xl font-normal leading-normal max-w-2xl mx-auto">
+                    Analyze your focus. Optimize your learning. Achieve your goals.
+                  </h2>
+                </div>
+                <div className="flex-wrap gap-4 flex justify-center z-10">
+                  <button
+                    onClick={() => router.push('/auth/login?view=signup')}
+                    className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-12 px-6 bg-primary text-white text-base font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition-all duration-300 transform hover:scale-105 shadow-[0_0_20px_theme(colors.primary)]"
+                  >
+                    <span className="truncate">Start Your Free Trial</span>
+                  </button>
+                  <button
+                    onClick={() => router.push('#demo')}
+                    className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-12 px-6 bg-white/10 text-white text-base font-bold leading-normal tracking-[0.015em] border border-white/20 hover:bg-white/20 transition-colors"
+                  >
+                    <span className="truncate">See How It Works</span>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </footer>
-    </div>
-  )
-}
 
-// Hero Section Component
-function HeroSection({ router, smoothProgress }: any) {
-  const opacity = useTransform(smoothProgress, [0, 0.12], [1, 0])
-  const y = useTransform(smoothProgress, [0, 0.12], [0, -100])
-  const scale = useTransform(smoothProgress, [0, 0.12], [1, 0.8])
-
-  return (
-    <motion.section
-      style={{ opacity, y, scale }}
-      className="relative min-h-screen flex items-center justify-center snap-start"
-    >
-      <div className="container mx-auto px-8 text-center relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.3 }}
-        >
-          <h1 className="text-[clamp(3rem,15vw,10rem)] font-bold leading-[0.9] mb-8 tracking-tighter">
-            <span className="block gradient-text">ELEVATE</span>
-            <span className="block text-white/90 italic font-light">Your Focus</span>
-            <span className="block gradient-text">WITH AI</span>
-          </h1>
-        </motion.div>
-
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 0.8 }}
-          className="text-lg md:text-2xl font-light text-white/60 max-w-3xl mx-auto mb-12 tracking-wide"
-        >
-          컴퓨터 비전과 AI가 만나 당신의 학습 습관을 혁신합니다
-        </motion.p>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 1.2 }}
-          className="flex flex-col sm:flex-row gap-6 justify-center items-center"
-        >
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => router.push('/auth/register')}
-            className="group relative px-12 py-5 bg-accent-blue text-white text-sm font-semibold tracking-wider overflow-hidden shadow-glow-md hover:shadow-glow-lg transition-all"
-          >
-            <span className="relative z-10 flex items-center gap-3">
-              GET STARTED FREE
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
-            </span>
-          </motion.button>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => {
-              document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })
-            }}
-            className="px-12 py-5 glass hover:glass-strong text-sm font-semibold tracking-wider transition-all"
-          >
-            LEARN MORE
-          </motion.button>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.8, duration: 1 }}
-          className="mt-20 grid grid-cols-3 gap-8 max-w-3xl mx-auto"
-        >
-          {[
-            { value: '95%', label: '집중도 향상' },
-            { value: '2.5x', label: '학습 효율' },
-            { value: '1000+', label: '활성 사용자' },
-          ].map((stat, idx) => (
-            <div key={idx} className="text-center">
-              <div className="text-4xl md:text-5xl font-bold gradient-text mb-2">{stat.value}</div>
-              <p className="text-sm text-white/50">{stat.label}</p>
+        {/* Features Section */}
+        <section className="px-4 md:px-10 py-20" id="features">
+          <div className="flex flex-col gap-10 @container">
+            <div className="flex flex-col gap-4 text-center">
+              <h1 className="text-white tracking-tighter text-4xl md:text-5xl font-black leading-tight max-w-3xl mx-auto">
+                See Your Focus in a New Light.
+              </h1>
+              <p className="text-[#eaeaea] text-lg font-normal leading-normal max-w-3xl mx-auto">
+                Our AI analyzes your study sessions to provide actionable insights into your focus and distraction patterns, empowering you to optimize your learning environment.
+              </p>
             </div>
-          ))}
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 2.2, duration: 1 }}
-          className="absolute bottom-12 left-1/2 -translate-x-1/2"
-        >
-          <motion.div
-            animate={{ y: [0, 10, 0] }}
-            transition={{ duration: 1.5, repeat: Infinity }}
-            className="w-px h-16 bg-gradient-to-b from-transparent via-accent-blue to-transparent"
-          />
-        </motion.div>
-      </div>
-
-      {/* Background Grid */}
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute inset-0" style={{
-          backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)',
-          backgroundSize: '80px 80px'
-        }} />
-      </div>
-    </motion.section>
-  )
-}
-
-// Features Section Component
-function FeaturesSection({ smoothProgress }: any) {
-  const opacity = useTransform(smoothProgress, [0.1, 0.15, 0.3, 0.35], [0, 1, 1, 0])
-  const scale = useTransform(smoothProgress, [0.1, 0.15, 0.3, 0.35], [0.8, 1, 1, 0.8])
-  const y = useTransform(smoothProgress, [0.1, 0.15], [100, 0])
-
-  const features = [
-    {
-      icon: Eye,
-      title: 'AI VISION',
-      subtitle: '실시간 모니터링',
-      description: '컴퓨터 비전이 자세, 스마트폰 사용, 집중도를 실시간으로 분석합니다.',
-      gradient: 'from-accent-blue to-accent-purple',
-    },
-    {
-      icon: Target,
-      title: 'SMART PLANNER',
-      subtitle: '직관적 스케줄링',
-      description: '드래그 앤 드롭으로 학습 계획을 손쉽게 구성하고 관리하세요.',
-      gradient: 'from-accent-purple to-accent-pink',
-    },
-    {
-      icon: Zap,
-      title: 'FOCUS TIMER',
-      subtitle: '뽀모도로 기법',
-      description: '과학적으로 검증된 집중 타이머와 AI 방해 요소 감지 시스템.',
-      gradient: 'from-accent-pink to-accent-orange',
-    },
-    {
-      icon: BarChart,
-      title: 'ANALYTICS',
-      subtitle: '심층 분석',
-      description: '학습 패턴, 생산성 트렌드, 개선 영역을 상세하게 분석합니다.',
-      gradient: 'from-accent-orange to-accent-blue',
-    },
-    {
-      icon: TrendingUp,
-      title: 'PROGRESS',
-      subtitle: '성장 추적',
-      description: '시간에 따른 발전 과정을 차트와 마일스톤으로 시각화합니다.',
-      gradient: 'from-accent-green to-accent-blue',
-    },
-    {
-      icon: Brain,
-      title: 'AI COACH',
-      subtitle: '맞춤형 가이드',
-      description: '머신러닝이 최적의 학습 세션을 위한 개인화된 조언을 제공합니다.',
-      gradient: 'from-accent-blue to-accent-purple',
-    }
-  ]
-
-  return (
-    <motion.section
-      id="features"
-      style={{ opacity, scale }}
-      className="relative min-h-screen py-32 snap-start flex items-center"
-    >
-      <div className="container mx-auto px-8">
-        <motion.div style={{ y }} className="mb-24 text-center">
-          <h2 className="text-[clamp(2.5rem,8vw,6rem)] font-bold leading-none tracking-tighter mb-6 gradient-text">
-            CORE FEATURES
-          </h2>
-          <p className="text-lg font-light text-white/60 tracking-wide">
-            AI 기반 스마트 학습 관리 시스템
-          </p>
-        </motion.div>
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {features.map((feature, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-              viewport={{ once: true, margin: '-100px' }}
-              whileHover={{ scale: 1.05, y: -10 }}
-              className="group relative aspect-[4/5] glass hover:glass-strong transition-all duration-500 cursor-pointer overflow-hidden"
-            >
-              <div className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-20 transition-opacity duration-500`} />
-
-              <div className="relative z-10 p-8 h-full flex flex-col justify-between">
-                <div>
-                  <feature.icon className="w-14 h-14 mb-6 stroke-[1.5] text-accent-blue group-hover:text-white transition-colors" />
-                  <h3 className="text-3xl font-bold mb-2 tracking-tight gradient-text">{feature.title}</h3>
-                  <p className="text-sm font-light text-white/50 tracking-wider uppercase mb-4">
-                    {feature.subtitle}
+            <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-6 p-0">
+              <div className="flex flex-1 gap-4 rounded-xl border border-[#343465]/50 bg-[#1a1a32]/50 p-6 flex-col backdrop-blur-sm hover:border-primary transition-all duration-300 transform hover:-translate-y-1">
+                <div className="text-primary">
+                  <span className="material-symbols-outlined" style={{ fontSize: '32px' }}>visibility</span>
+                </div>
+                <div className="flex flex-col gap-1">
+                  <h2 className="text-white text-xl font-bold leading-tight">AI Computer Vision</h2>
+                  <p className="text-[#9393c8] text-base font-normal leading-normal">
+                    Our AI analyzes your study sessions to provide insights into your focus and distraction patterns, helping you understand where you can improve.
                   </p>
                 </div>
-                <p className="text-sm font-light text-white/70 leading-relaxed">
-                  {feature.description}
-                </p>
               </div>
+              <div className="flex flex-1 gap-4 rounded-xl border border-[#343465]/50 bg-[#1a1a32]/50 p-6 flex-col backdrop-blur-sm hover:border-primary transition-all duration-300 transform hover:-translate-y-1">
+                <div className="text-primary">
+                  <span className="material-symbols-outlined" style={{ fontSize: '32px' }}>event_available</span>
+                </div>
+                <div className="flex flex-col gap-1">
+                  <h2 className="text-white text-xl font-bold leading-tight">Study Planner Integration</h2>
+                  <p className="text-[#9393c8] text-base font-normal leading-normal">
+                    The AI insights are integrated into a smart study planner to create effective schedules tailored to your unique learning style and goals.
+                  </p>
+                </div>
+              </div>
+              <div className="flex flex-1 gap-4 rounded-xl border border-[#343465]/50 bg-[#1a1a32]/50 p-6 flex-col backdrop-blur-sm hover:border-primary transition-all duration-300 transform hover:-translate-y-1">
+                <div className="text-primary">
+                  <span className="material-symbols-outlined" style={{ fontSize: '32px' }}>school</span>
+                </div>
+                <div className="flex flex-col gap-1">
+                  <h2 className="text-white text-xl font-bold leading-tight">For Ambitious Students and Professionals</h2>
+                  <p className="text-[#9393c8] text-base font-normal leading-normal">
+                    Whether you're a university student, a remote worker, or a lifelong learner, Study Coach is designed to help you succeed.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
 
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 skew-x-[-20deg]" />
-            </motion.div>
-          ))}
+        {/* CTA Section */}
+        <div className="px-4 md:px-10 py-20">
+          <div className="@container">
+            <div className="flex flex-col justify-end gap-6 py-10 @[480px]:gap-8 @[480px]:py-20 bg-[#1a1a32]/30 rounded-xl">
+              <div className="flex flex-col gap-2 text-center">
+                <h1 className="text-white tracking-tighter text-4xl md:text-5xl font-black leading-tight max-w-3xl mx-auto">
+                  Ready to Revolutionize Your Work?
+                </h1>
+              </div>
+              <div className="flex flex-1 justify-center mt-4">
+                <div className="flex justify-center">
+                  <button
+                    onClick={() => router.push('/auth/login?view=signup')}
+                    className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-12 px-6 bg-primary text-white text-base font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition-all duration-300 transform hover:scale-105 shadow-[0_0_20px_theme(colors.primary)]"
+                  >
+                    <span className="truncate">Get Started Now</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-    </motion.section>
-  )
-}
+      </main>
 
-// How It Works Section Component
-function HowItWorksSection({ smoothProgress }: any) {
-  const opacity = useTransform(smoothProgress, [0.32, 0.38, 0.5, 0.55], [0, 1, 1, 0])
-  const scale = useTransform(smoothProgress, [0.32, 0.38], [0.9, 1])
-
-  return (
-    <motion.section
-      style={{ opacity, scale }}
-      className="relative min-h-screen py-32 snap-start border-y border-white/5 flex items-center"
-    >
-      <div className="container mx-auto px-8">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-          className="mb-24 text-center"
-        >
-          <h2 className="text-[clamp(2.5rem,8vw,6rem)] font-bold leading-none tracking-tighter mb-6 gradient-text">
-            HOW IT WORKS
-          </h2>
-          <p className="text-lg font-light text-white/60 tracking-wide">
-            3단계로 시작하는 스마트 학습
-          </p>
-        </motion.div>
-
-        <div className="grid lg:grid-cols-3 gap-12">
-          {[
-            {
-              step: '01',
-              title: '계획 수립',
-              description: '타임테이블에 학습 계획을 드래그로 간편하게 배치하세요. AI가 최적의 학습 시간을 추천합니다.',
-              icon: Target,
-            },
-            {
-              step: '02',
-              title: '집중 세션',
-              description: 'AI가 웹캠으로 자세와 집중도를 실시간 모니터링하며, 방해 요소를 즉시 알려줍니다.',
-              icon: Eye,
-            },
-            {
-              step: '03',
-              title: '분석 & 개선',
-              description: '상세한 리포트로 학습 패턴을 분석하고, 개인화된 개선 방법을 제안받으세요.',
-              icon: TrendingUp,
-            }
-          ].map((item, idx) => (
-            <motion.div
-              key={idx}
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: idx * 0.2 }}
-              viewport={{ once: true }}
-              whileHover={{ y: -10 }}
-              className="relative glass p-10 hover:glass-strong transition-all duration-500 group"
-            >
-              <div className="text-8xl font-bold text-white/5 absolute top-8 right-8 group-hover:text-accent-blue/10 transition-colors">
-                {item.step}
-              </div>
-              <item.icon className="w-16 h-16 mb-6 text-accent-blue" />
-              <h3 className="text-3xl font-bold mb-4 gradient-text">{item.title}</h3>
-              <p className="text-white/70 leading-relaxed">{item.description}</p>
-            </motion.div>
-          ))}
+      {/* Footer */}
+      <footer className="flex flex-col gap-6 px-5 py-10 text-center @container border-t border-solid border-[#242447]">
+        <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 @[480px]:flex-row @[480px]:justify-around">
+          <a className="text-[#9393c8] text-sm font-normal leading-normal min-w-40 hover:text-white" href="#">Terms of Service</a>
+          <a className="text-[#9393c8] text-sm font-normal leading-normal min-w-40 hover:text-white" href="#">Privacy Policy</a>
         </div>
-      </div>
-    </motion.section>
-  )
-}
-
-// Benefits Section Component
-function BenefitsSection({ smoothProgress }: any) {
-  const opacity = useTransform(smoothProgress, [0.52, 0.58, 0.68, 0.72], [0, 1, 1, 0])
-
-  return (
-    <motion.section
-      style={{ opacity }}
-      className="relative min-h-screen py-32 snap-start flex items-center"
-    >
-      <div className="container mx-auto px-8">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-          className="mb-24 text-center"
-        >
-          <h2 className="text-[clamp(2.5rem,8vw,6rem)] font-bold leading-none tracking-tighter mb-6 gradient-text">
-            WHY CHOOSE US
-          </h2>
-          <p className="text-lg font-light text-white/60 tracking-wide">
-            Study Coach만의 차별화된 강점
-          </p>
-        </motion.div>
-
-        <div className="grid md:grid-cols-2 gap-16 max-w-6xl mx-auto">
-          {[
-            {
-              icon: Shield,
-              title: '프라이버시 보장',
-              description: '모든 비전 분석은 로컬에서 처리되며, 개인정보는 절대 외부로 전송되지 않습니다.',
-            },
-            {
-              icon: Sparkles,
-              title: '실시간 AI 피드백',
-              description: '거북목, 스마트폰 사용 등을 즉시 감지하고 부드러운 알림으로 바른 자세를 유도합니다.',
-            },
-            {
-              icon: Users,
-              title: '직관적 UX',
-              description: 'Lusion.co에서 영감받은 화려하고 인터랙티브한 디자인으로 즐거운 사용 경험을 제공합니다.',
-            },
-            {
-              icon: Clock,
-              title: '시간 관리 최적화',
-              description: '계획 대비 실제 집중 시간을 비교 분석하여, 더 정확한 시간 예측 능력을 키웁니다.',
-            }
-          ].map((benefit, idx) => (
-            <motion.div
-              key={idx}
-              initial={{ opacity: 0, x: idx % 2 === 0 ? -50 : 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: idx * 0.1 }}
-              viewport={{ once: true }}
-              className="flex gap-6 group"
-            >
-              <div className="flex-shrink-0">
-                <motion.div
-                  whileHover={{ scale: 1.1, rotate: 360 }}
-                  transition={{ duration: 0.6 }}
-                  className="w-16 h-16 rounded-full glass-strong flex items-center justify-center group-hover:shadow-glow-md transition-all"
-                >
-                  <benefit.icon className="w-8 h-8 text-accent-blue" />
-                </motion.div>
-              </div>
-              <div>
-                <h3 className="text-2xl font-bold mb-3 gradient-text">{benefit.title}</h3>
-                <p className="text-white/70 leading-relaxed">{benefit.description}</p>
-              </div>
-            </motion.div>
-          ))}
+        <div className="flex flex-wrap justify-center gap-6">
+          <a className="text-[#9393c8] hover:text-white transition-colors" href="#">
+            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M22.675 0h-21.35c-.732 0-1.325.593-1.325 1.325v21.351c0 .731.593 1.324 1.325 1.324h11.495v-9.294h-3.128v-3.622h3.128v-2.671c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12v9.293h6.116c.73 0 1.323-.593 1.323-1.325v-21.35c0-.732-.593-1.325-1.323-1.325z"></path>
+            </svg>
+          </a>
+          <a className="text-[#9393c8] hover:text-white transition-colors" href="#">
+            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-.424.727-.666 1.581-.666 2.477 0 1.921.93 3.615 2.348 4.608-.86-.027-1.67-.265-2.38-.654v.052c0 2.68 1.905 4.912 4.426 5.42-.463.125-.951.192-1.455.192-.355 0-.702-.034-1.045-.098.704 2.193 2.748 3.79 5.174 3.833-1.893 1.483-4.28 2.366-6.872 2.366-.447 0-.89-.026-1.326-.077 2.449 1.57 5.357 2.48 8.49 2.48 10.183 0 15.763-8.435 15.485-15.795.955-.69 1.782-1.554 2.44-2.54z"></path>
+            </svg>
+          </a>
+          <a className="text-[#9393c8] hover:text-white transition-colors" href="#">
+            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.162 6.162 6.162 6.162-2.759 6.162-6.162-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4s1.791-4 4-4 4 1.79 4 4-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44 1.441-.645 1.441-1.44-.645-1.44-1.441-1.44z"></path>
+            </svg>
+          </a>
         </div>
-      </div>
-    </motion.section>
-  )
-}
-
-// Stats Section Component
-function StatsSection({ smoothProgress }: any) {
-  const opacity = useTransform(smoothProgress, [0.68, 0.72, 0.8, 0.84], [0, 1, 1, 0])
-  const scale = useTransform(smoothProgress, [0.68, 0.72], [0.8, 1])
-
-  return (
-    <motion.section
-      style={{ opacity, scale }}
-      className="relative min-h-screen py-32 snap-start border-y border-white/5 flex items-center overflow-hidden"
-    >
-      <div className="container mx-auto px-8">
-        <div className="grid md:grid-cols-4 gap-12">
-          {[
-            { value: '95%', label: '평균 집중도 향상' },
-            { value: '2.5x', label: '학습 효율 증가' },
-            { value: '1000+', label: '활성 사용자' },
-            { value: '50K+', label: '누적 집중 세션' },
-          ].map((stat, idx) => (
-            <motion.div
-              key={idx}
-              initial={{ opacity: 0, scale: 0.5 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: idx * 0.1 }}
-              viewport={{ once: true }}
-              whileHover={{ scale: 1.1 }}
-              className="text-center group"
-            >
-              <div className="text-[clamp(3rem,8vw,6rem)] font-bold leading-none mb-4 gradient-text transition-transform">
-                {stat.value}
-              </div>
-              <p className="text-sm font-light text-white/60 tracking-wider uppercase">
-                {stat.label}
-              </p>
-            </motion.div>
-          ))}
-        </div>
-      </div>
-
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-accent-blue/5 to-transparent pointer-events-none" />
-    </motion.section>
-  )
-}
-
-// Testimonials Section Component
-function TestimonialsSection({ smoothProgress }: any) {
-  const opacity = useTransform(smoothProgress, [0.8, 0.84, 0.92, 0.96], [0, 1, 1, 0])
-
-  return (
-    <motion.section
-      style={{ opacity }}
-      className="relative min-h-screen py-32 snap-start flex items-center"
-    >
-      <div className="container mx-auto px-8">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-          className="mb-24 text-center"
-        >
-          <h2 className="text-[clamp(2.5rem,8vw,6rem)] font-bold leading-none tracking-tighter mb-6 gradient-text">
-            USER STORIES
-          </h2>
-          <p className="text-lg font-light text-white/60 tracking-wide">
-            실제 사용자들의 생생한 후기
-          </p>
-        </motion.div>
-
-        <div className="grid md:grid-cols-3 gap-8">
-          {[
-            {
-              name: '김민수',
-              role: '수험생',
-              content: 'AI가 자세를 알려줘서 허리 통증이 사라졌고, 집중 시간도 2배 늘었습니다. 정말 효과적이에요!',
-              rating: 5,
-            },
-            {
-              name: '이서연',
-              role: '대학생',
-              content: '스마트폰을 자주 만지는 습관이 있었는데, 실시간 알림 덕분에 많이 개선됐어요. 추천합니다!',
-              rating: 5,
-            },
-            {
-              name: '박준호',
-              role: '재택근무자',
-              content: '업무 집중도가 확실히 올라갔고, 리포트로 나를 객관적으로 볼 수 있어서 좋습니다.',
-              rating: 5,
-            }
-          ].map((testimonial, idx) => (
-            <motion.div
-              key={idx}
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: idx * 0.15 }}
-              viewport={{ once: true }}
-              whileHover={{ scale: 1.05, y: -10 }}
-              className="glass p-8 hover:glass-strong transition-all duration-500"
-            >
-              <div className="flex gap-1 mb-4">
-                {Array.from({ length: testimonial.rating }).map((_, i) => (
-                  <Sparkles key={i} className="w-5 h-5 text-accent-blue fill-accent-blue" />
-                ))}
-              </div>
-              <p className="text-white/80 leading-relaxed mb-6 italic">"{testimonial.content}"</p>
-              <div>
-                <div className="font-bold text-white">{testimonial.name}</div>
-                <div className="text-sm text-white/50">{testimonial.role}</div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </div>
-    </motion.section>
-  )
-}
-
-// Final CTA Section Component
-function CTASection({ router, smoothProgress }: any) {
-  const opacity = useTransform(smoothProgress, [0.92, 0.96, 1], [0, 1, 1])
-  const scale = useTransform(smoothProgress, [0.92, 0.96], [0.8, 1])
-
-  return (
-    <motion.section
-      style={{ opacity, scale }}
-      className="relative min-h-screen py-48 snap-start flex items-center overflow-hidden"
-    >
-      <div className="container mx-auto px-8 text-center relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1 }}
-          viewport={{ once: true }}
-        >
-          <h2 className="text-[clamp(3rem,12vw,9rem)] font-bold leading-none tracking-tighter mb-12">
-            <span className="block gradient-text">START YOUR</span>
-            <span className="block text-white/90 italic font-light">JOURNEY TODAY</span>
-          </h2>
-
-          <p className="text-xl text-white/60 mb-12 max-w-2xl mx-auto">
-            지금 바로 AI 학습 코치와 함께 목표를 달성하세요
-          </p>
-
-          <motion.button
-            onClick={() => router.push('/auth/register')}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-            className="group px-16 py-6 bg-accent-blue text-white text-sm font-bold tracking-[0.3em] hover:shadow-glow-lg transition-all"
-          >
-            <span className="flex items-center gap-4">
-              GET STARTED FREE
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
-            </span>
-          </motion.button>
-
-          <p className="mt-6 text-sm text-white/40">
-            무료로 시작하고, 언제든지 업그레이드하세요
-          </p>
-        </motion.div>
-      </div>
-
-      <div className="absolute inset-0 bg-gradient-to-t from-accent-blue/10 via-transparent to-transparent pointer-events-none" />
-    </motion.section>
+        <p className="text-[#9393c8] text-sm font-normal leading-normal">© 2023 Study Coach. All rights reserved.</p>
+      </footer>
+    </div>
   )
 }

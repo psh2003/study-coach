@@ -1,13 +1,13 @@
 import { create } from 'zustand'
 
 export interface Distraction {
-  type: 'posture' | 'phone' | 'absence'
+  type: 'posture' | 'phone' | 'absence' | 'drowsiness'
   timestamp: string
   duration?: number
 }
 
 interface FocusState {
-  // Session state
+  // ... existing fields
   isSessionActive: boolean
   currentTaskId: string | null
   sessionStartTime: Date | null
@@ -19,8 +19,11 @@ interface FocusState {
   postureWarning: boolean
   phoneWarning: boolean
   absenceWarning: boolean
+  drowsinessWarning: boolean
 
-  // Session data
+  // ... existing fields
+  isWebcamActive: boolean
+  webcamStream: MediaStream | null
   distractions: Distraction[]
 
   // Actions
@@ -31,9 +34,12 @@ interface FocusState {
   setPostureWarning: (warning: boolean) => void
   setPhoneWarning: (warning: boolean) => void
   setAbsenceWarning: (warning: boolean) => void
+  setDrowsinessWarning: (warning: boolean) => void
   addDistraction: (distraction: Distraction) => void
   incrementFocusTime: () => void
   resetSession: () => void
+  activateWebcam: () => Promise<void>
+  deactivateWebcam: () => void
 }
 
 export const useFocusStore = create<FocusState>((set, get) => ({
@@ -41,13 +47,17 @@ export const useFocusStore = create<FocusState>((set, get) => ({
   isSessionActive: false,
   currentTaskId: null,
   sessionStartTime: null,
-  focusDuration: 25 * 60, // 25 minutes in seconds
-  breakDuration: 5 * 60, // 5 minutes in seconds
+  focusDuration: 25 * 60,
+  breakDuration: 5 * 60,
   isPaused: false,
 
   postureWarning: false,
   phoneWarning: false,
   absenceWarning: false,
+  drowsinessWarning: false,
+
+  isWebcamActive: false,
+  webcamStream: null,
 
   distractions: [],
 
@@ -61,7 +71,10 @@ export const useFocusStore = create<FocusState>((set, get) => ({
     postureWarning: false,
     phoneWarning: false,
     absenceWarning: false,
+    drowsinessWarning: false,
   }),
+
+  // ... existing actions
 
   endSession: () => set({
     isSessionActive: false,
@@ -104,6 +117,16 @@ export const useFocusStore = create<FocusState>((set, get) => ({
     }
   },
 
+  setDrowsinessWarning: (warning) => {
+    set({ drowsinessWarning: warning })
+    if (warning) {
+      get().addDistraction({
+        type: 'drowsiness',
+        timestamp: new Date().toISOString(),
+      })
+    }
+  },
+
   addDistraction: (distraction) => set((state) => ({
     distractions: [...state.distractions, distraction],
   })),
@@ -121,5 +144,46 @@ export const useFocusStore = create<FocusState>((set, get) => ({
     postureWarning: false,
     phoneWarning: false,
     absenceWarning: false,
+    drowsinessWarning: false,
   }),
+
+  activateWebcam: async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          width: { ideal: 640 },
+          height: { ideal: 480 },
+          facingMode: 'user',
+        },
+      })
+
+      set({
+        isWebcamActive: true,
+        webcamStream: stream,
+      })
+
+      console.log('Webcam activated successfully')
+    } catch (error) {
+      console.error('Failed to activate webcam:', error)
+      throw error
+    }
+  },
+
+  deactivateWebcam: () => {
+    const { webcamStream } = get()
+
+    if (webcamStream) {
+      webcamStream.getTracks().forEach((track) => {
+        track.stop()
+        console.log(`Track ${track.kind} stopped`)
+      })
+    }
+
+    set({
+      isWebcamActive: false,
+      webcamStream: null,
+    })
+
+    console.log('Webcam deactivated and stream cleared')
+  },
 }))

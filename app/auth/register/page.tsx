@@ -2,9 +2,7 @@
 
 import { useState, FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
-import Link from 'next/link'
 import { useAuth } from '@/lib/hooks/useAuth'
-import { Lock, Mail, User, AlertCircle, CheckCircle } from 'lucide-react'
 
 export default function RegisterPage() {
   const router = useRouter()
@@ -24,12 +22,12 @@ export default function RegisterPage() {
 
     // Validation
     if (password !== confirmPassword) {
-      setError('비밀번호가 일치하지 않습니다.')
+      setError('Passwords do not match.')
       return
     }
 
     if (password.length < 6) {
-      setError('비밀번호는 최소 6자 이상이어야 합니다.')
+      setError('Password must be at least 6 characters.')
       return
     }
 
@@ -42,125 +40,146 @@ export default function RegisterPage() {
         router.push('/auth/login')
       }, 2000)
     } catch (err: any) {
-      setError(err.message || '회원가입에 실패했습니다.')
+      setError(err.message || 'Registration failed.')
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white flex items-center justify-center px-4 py-12">
-      <div className="max-w-md w-full">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">회원가입</h1>
-          <p className="text-gray-600">Study Coach와 함께 학습을 시작하세요</p>
-        </div>
+    <div className="relative flex h-auto min-h-screen w-full items-center justify-center overflow-hidden bg-[#080808] p-4">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(51,255,134,0.1)_0%,transparent_50%)]"></div>
 
-        <div className="bg-white rounded-lg shadow-lg p-8">
+      <div className="relative z-10 w-full max-w-md">
+        <div className="flex flex-col gap-8 w-full">
+          {/* Header */}
+          <div className="flex flex-col gap-3 text-center">
+            <p className="text-[#f8f8f8] text-4xl font-black leading-tight tracking-[-0.033em]">Get started</p>
+            <p className="text-[#a1a1a1] text-base font-normal leading-normal">Start your journey to better habits today</p>
+          </div>
+
+          {/* Error Message */}
           {error && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2 text-red-700">
-              <AlertCircle className="w-5 h-5" />
-              <p className="text-sm">{error}</p>
+            <div className="rounded-xl bg-red-500/10 border border-red-500/30 p-4">
+              <div className="flex items-center gap-2">
+                <span className="material-symbols-outlined text-red-400" style={{ fontSize: '20px' }}>error</span>
+                <p className="text-sm text-red-300">{error}</p>
+              </div>
             </div>
           )}
 
+          {/* Success Message */}
           {success && (
-            <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg flex items-center gap-2 text-green-700">
-              <CheckCircle className="w-5 h-5" />
-              <p className="text-sm">회원가입이 완료되었습니다! 로그인 페이지로 이동합니다...</p>
+            <div className="rounded-xl bg-green-500/10 border border-green-500/30 p-4">
+              <div className="flex items-center gap-2">
+                <span className="material-symbols-outlined text-green-400" style={{ fontSize: '20px' }}>check_circle</span>
+                <p className="text-sm text-green-300">Account created! Redirecting to login...</p>
+              </div>
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                이름
-              </label>
-              <div className="relative">
-                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+          {/* Form */}
+          <div className="w-full">
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+              <label className="flex flex-col min-w-40 flex-1">
+                <p className="text-[#f8f8f8] text-base font-medium leading-normal pb-2">Name</p>
                 <input
-                  id="name"
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                  placeholder="홍길동"
+                  placeholder="Enter your name"
+                  className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#f8f8f8] focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#2e2e2e] bg-[#1c1c1c] hover:border-primary/30 transition-all duration-300 h-14 placeholder:text-[#a1a1a1] p-4 text-base font-normal leading-normal"
                 />
-              </div>
-            </div>
-
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                이메일
               </label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+
+              <label className="flex flex-col min-w-40 flex-1">
+                <p className="text-[#f8f8f8] text-base font-medium leading-normal pb-2">Email</p>
                 <input
-                  id="email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                  placeholder="your@email.com"
+                  placeholder="Enter your email"
+                  className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#f8f8f8] focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#2e2e2e] bg-[#1c1c1c] hover:border-primary/30 transition-all duration-300 h-14 placeholder:text-[#a1a1a1] p-4 text-base font-normal leading-normal"
                 />
-              </div>
-            </div>
-
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-                비밀번호
               </label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+
+              <label className="flex flex-col min-w-40 flex-1">
+                <p className="text-[#f8f8f8] text-base font-medium leading-normal pb-2">Password</p>
                 <input
-                  id="password"
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                  placeholder="••••••••"
+                  placeholder="Create a password"
+                  className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#f8f8f8] focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#2e2e2e] bg-[#1c1c1c] hover:border-primary/30 transition-all duration-300 h-14 placeholder:text-[#a1a1a1] p-4 text-base font-normal leading-normal"
                 />
-              </div>
-            </div>
-
-            <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
-                비밀번호 확인
               </label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+
+              <label className="flex flex-col min-w-40 flex-1">
+                <p className="text-[#f8f8f8] text-base font-medium leading-normal pb-2">Confirm Password</p>
                 <input
-                  id="confirmPassword"
                   type="password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                  placeholder="••••••••"
+                  placeholder="Confirm your password"
+                  className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#f8f8f8] focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#2e2e2e] bg-[#1c1c1c] hover:border-primary/30 transition-all duration-300 h-14 placeholder:text-[#a1a1a1] p-4 text-base font-normal leading-normal"
                 />
+              </label>
+
+              <div className="flex px-4 py-3 justify-center">
+                <button
+                  type="submit"
+                  disabled={loading || success}
+                  className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-12 px-5 flex-1 bg-primary text-primary-foreground text-base font-bold leading-normal tracking-[0.015em] shadow-glow hover:shadow-glow-hover transition-shadow duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {loading ? (
+                    <div className="flex items-center gap-2">
+                      <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary-foreground border-t-transparent"></div>
+                      <span className="truncate">Creating account...</span>
+                    </div>
+                  ) : success ? (
+                    <span className="truncate">Success!</span>
+                  ) : (
+                    <span className="truncate">Sign Up</span>
+                  )}
+                </button>
               </div>
-            </div>
 
-            <button
-              type="submit"
-              disabled={loading || success}
-              className="w-full py-3 bg-primary-600 text-white rounded-lg font-semibold hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              {loading ? '가입 중...' : '회원가입'}
-            </button>
-          </form>
+              <p className="text-xs text-center text-[#a1a1a1]">
+                By signing up, you agree to our{' '}
+                <a className="text-primary hover:underline" href="#">Terms of Service</a> and{' '}
+                <a className="text-primary hover:underline" href="#">Privacy Policy</a>.
+              </p>
+            </form>
+          </div>
 
-          <div className="mt-6 text-center">
-            <p className="text-gray-600">
-              이미 계정이 있으신가요?{' '}
-              <Link href="/auth/login" className="text-primary-600 font-semibold hover:underline">
-                로그인
-              </Link>
+          {/* Login Link */}
+          <div className="text-center pt-2">
+            <p className="text-sm text-[#a1a1a1]">
+              Already have an account?{' '}
+              <button
+                onClick={() => router.push('/auth/login')}
+                className="text-primary hover:underline font-medium"
+              >
+                Login
+              </button>
             </p>
           </div>
+        </div>
+
+        {/* Back to Home */}
+        <div className="mt-6 text-center">
+          <button
+            onClick={() => router.push('/')}
+            className="text-sm text-[#9393c8] hover:text-primary transition-colors inline-flex items-center gap-1"
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>arrow_back</span>
+            Back to Home
+          </button>
         </div>
       </div>
     </div>

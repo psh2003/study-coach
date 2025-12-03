@@ -3,46 +3,41 @@
 @tailwind utilities;
 
 :root {
-  /* Dark theme colors - Lusion inspired */
-  --bg-primary: #0a0a0a;
-  --bg-secondary: #111111;
-  --bg-tertiary: #1a1a1a;
-  --text-primary: #ffffff;
-  --text-secondary: #a0a0a0;
-  --text-tertiary: #666666;
-  --border-primary: rgba(255, 255, 255, 0.1);
-  --border-secondary: rgba(255, 255, 255, 0.05);
-
-  /* Gradient colors */
-  --gradient-blue: #3b82f6;
-  --gradient-purple: #8b5cf6;
-  --gradient-pink: #ec4899;
-  --gradient-orange: #f97316;
-  --gradient-green: #10b981;
+  /* Dark theme colors */
+  --bg-primary: #0D0D0D;
+  --bg-secondary: #1A1A1A;
+  --text-primary: #F5F5F5;
+  --text-secondary: #A3A3A3;
+  --accent-orange: #FA5D29;
+  --accent-blue: #49B3FC;
+  --border-color: rgba(163, 163, 163, 0.1);
 }
 
 * {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
 }
 
 html {
   scroll-behavior: smooth;
-  cursor: none;
-  scroll-snap-type: y proximity;
+  scroll-snap-type: y mandatory;
   overflow-y: scroll;
+  overflow-x: hidden;
+  background: var(--bg-primary);
 }
 
 body {
-  color: var(--text-primary);
+  margin: 0;
+  padding: 0;
   background: var(--bg-primary);
-  font-feature-settings: 'kern' 1;
-  text-rendering: optimizeLegibility;
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
-  cursor: none;
 }
 
 @layer utilities {
@@ -50,116 +45,191 @@ body {
     text-wrap: balance;
   }
 
-  /* Glassmorphism */
+  /* Dark theme Glass effects */
   .glass {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(26, 26, 26, 0.8);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(163, 163, 163, 0.1);
+    border-radius: 16px;
   }
 
   .glass-strong {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(26, 26, 26, 0.95);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(163, 163, 163, 0.15);
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
   }
 
-  /* Gradient text */
+  /* 미니멀 그라디언트 텍스트 */
   .gradient-text {
-    background: linear-gradient(135deg, var(--gradient-blue), var(--gradient-purple), var(--gradient-pink));
+    background: linear-gradient(135deg, #FA5D29 0%, #49B3FC 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    text-fill-color: transparent;
   }
 
-  /* Hover glow effect */
-  .hover-glow {
-    transition: box-shadow 0.3s ease;
+  /* 서브틀 호버 효과 */
+  .hover-lift {
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+                box-shadow 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+                background 0.3s ease;
   }
 
-  .hover-glow:hover {
-    box-shadow: 0 0 30px rgba(59, 130, 246, 0.3);
+  .hover-lift:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
   }
 
-  /* Hide default cursor */
-  .no-cursor * {
-    cursor: none !important;
+  /* 버튼 호버 효과 강화 */
+  .btn-primary {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+  }
+
+  .btn-primary:hover::before {
+    width: 300px;
+    height: 300px;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(250, 93, 41, 0.3);
+  }
+
+  /* 패럴랙스 배경 */
+  .parallax-bg {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 20% 30%, rgba(73, 179, 252, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(250, 93, 41, 0.08) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  /* 그라디언트 보더 */
+  .gradient-border {
+    position: relative;
+    background: white;
+    border-radius: 16px;
+  }
+
+  .gradient-border::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 16px;
+    padding: 2px;
+    background: linear-gradient(135deg, #FA5D29, #49B3FC);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+  }
+
+  /* 소프트 섀도우 */
+  .shadow-soft {
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.04);
+  }
+
+  .shadow-soft-lg {
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+  }
+
+  /* 풀페이지 스크롤 스냅 */
+  .scroll-snap-start {
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+
+  /* 모바일 최적화 */
+  @media (max-width: 768px) {
+    html {
+      scroll-snap-type: y proximity;
+    }
+
+    .hover-lift:active {
+      transform: translateY(-4px) scale(0.98);
+    }
+
+    .btn-primary:active {
+      transform: scale(0.95);
+    }
+
+    /* 모바일 터치 반응 개선 */
+    .glass-strong,
+    .hover-lift {
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+
+    /* 모바일 텍스트 크기 조정 */
+    .gradient-text {
+      -webkit-text-size-adjust: 100%;
+    }
+  }
+
+  /* 태블릿 최적화 */
+  @media (min-width: 769px) and (max-width: 1024px) {
+    .hover-lift:hover {
+      transform: translateY(-6px) scale(1.01);
+    }
+  }
+
+  /* 터치 디바이스 감지 */
+  @media (hover: none) and (pointer: coarse) {
+    .hover-lift {
+      transition: transform 0.2s ease;
+    }
+
+    .hover-lift:active {
+      transform: scale(0.97);
+    }
   }
 }
 
-/* Custom scrollbar - Dark theme */
+
+/* Custom scrollbar - 다크 테마 */
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--bg-secondary);
+  background: #0D0D0D;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 5px;
-  border: 2px solid var(--bg-secondary);
+  background: rgba(163, 163, 163, 0.3);
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(163, 163, 163, 0.5);
 }
 
-/* Selection */
+/* Selection color */
 ::selection {
-  background: rgba(59, 130, 246, 0.3);
-  color: white;
+  background: rgba(82, 255, 134, 0.3);
+  color: #F5F5F5;
 }
 
 ::-moz-selection {
-  background: rgba(59, 130, 246, 0.3);
-  color: white;
-}
-
-/* Loading animation */
-@keyframes shimmer {
-  0% {
-    background-position: -1000px 0;
-  }
-  100% {
-    background-position: 1000px 0;
-  }
-}
-
-.shimmer {
-  animation: shimmer 2s infinite;
-  background: linear-gradient(
-    to right,
-    rgba(255, 255, 255, 0.05) 0%,
-    rgba(255, 255, 255, 0.1) 50%,
-    rgba(255, 255, 255, 0.05) 100%
-  );
-  background-size: 1000px 100%;
-}
-
-/* Fade in animation */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.fade-in {
-  animation: fadeIn 0.6s ease-out;
-}
-
-/* Grid background */
-.grid-background {
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-  background-size: 50px 50px;
+  background: rgba(82, 255, 134, 0.3);
+  color: #F5F5F5;
 }

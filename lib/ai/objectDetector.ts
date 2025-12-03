@@ -1,75 +1,87 @@
-import * as cocoSsd from '@tensorflow-models/coco-ssd'
-import '@tensorflow/tfjs-backend-webgl'
+import {
+  ObjectDetector,
+  FilesetResolver,
+  ObjectDetectorResult,
+  Detection
+} from '@mediapipe/tasks-vision'
 
-export interface DetectedObject {
-  bbox: [number, number, number, number] // [x, y, width, height]
-  class: string
-  score: number
-}
+export class ObjectDetectorProcessor {
+  private objectDetector: ObjectDetector | null = null
+  private isLoaded = false
 
-class ObjectDetector {
-  private model: cocoSsd.ObjectDetection | null = null
-  private isInitialized = false
-
-  async initialize() {
-    if (this.isInitialized) return
-
+  async load() {
     try {
-      this.model = await cocoSsd.load()
-      this.isInitialized = true
-      console.log('Object detector initialized')
+      const vision = await FilesetResolver.forVisionTasks(
+        'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/wasm'
+      )
+
+      this.objectDetector = await ObjectDetector.createFromOptions(vision, {
+        baseOptions: {
+          modelAssetPath: `https://storage.googleapis.com/mediapipe-models/object_detector/efficientdet_lite0/float16/1/efficientdet_lite0.tflite`,
+          delegate: 'GPU'
+        },
+        runningMode: 'VIDEO',
+        scoreThreshold: 0.25, // Lenient threshold as per user preference
+        maxResults: 5
+      })
+
+      this.isLoaded = true
+      console.log('MediaPipe ObjectDetector loaded successfully')
     } catch (error) {
-      console.error('Failed to initialize object detector:', error)
+      console.error('Failed to load ObjectDetector:', error)
       throw error
     }
   }
 
-  async detectObjects(
-    videoElement: HTMLVideoElement
-  ): Promise<DetectedObject[]> {
-    if (!this.model || !this.isInitialized) {
-      await this.initialize()
-    }
+  detectObjects(video: HTMLVideoElement, timestamp: number): ObjectDetectorResult | null {
+    if (!this.isLoaded || !this.objectDetector) return null
 
     try {
-      const predictions = await this.model!.detect(videoElement)
-      return predictions.map((pred) => ({
-        bbox: pred.bbox,
-        class: pred.class,
-        score: pred.score,
-      }))
+      const result = this.objectDetector.detectForVideo(video, timestamp)
+      return result
     } catch (error) {
       console.error('Error detecting objects:', error)
-      return []
+      return null
     }
   }
 
-  /**
-   * Check if a phone is visible in the frame
-   */
-  isPhoneVisible(objects: DetectedObject[]): boolean {
-    return objects.some(
-      (obj) =>
-        obj.class === 'cell phone' &&
-        obj.score > 0.5 // Confidence threshold
+  isPhoneVisible(result: ObjectDetectorResult | null): boolean {
+    if (!result || !result.detections) return false
+
+    return result.detections.some(detection =>
+      detection.categories.some(category =>
+        category.categoryName === 'cell phone' && category.score > 0.25
+      )
     )
   }
 
-  /**
-   * Get all phones detected in frame with their positions
-   */
-  getPhones(objects: DetectedObject[]): DetectedObject[] {
-    return objects.filter(
-      (obj) => obj.class === 'cell phone' && obj.score > 0.5
+  getPhones(result: ObjectDetectorResult | null): Detection[] {
+    if (!result || !result.detections) return []
+
+    return result.detections.filter(detection =>
+      detection.categories.some(category =>
+        category.categoryName === 'cell phone' && category.score > 0.25
+      )
+    )
+  }
+
+  isPersonDetected(result: ObjectDetectorResult | null): boolean {
+    if (!result || !result.detections) return false
+
+    return result.detections.some(detection =>
+      detection.categories.some(category =>
+        category.categoryName === 'person' && category.score > 0.25
+      )
     )
   }
 
   dispose() {
-    // COCO-SSD doesn't have explicit dispose, but we can release reference
-    this.model = null
-    this.isInitialized = false
+    if (this.objectDetector) {
+      this.objectDetector.close()
+      this.objectDetector = null
+    }
+    this.isLoaded = false
   }
 }
 
-// Singleton instance
-export const objectDetector = new ObjectDetector()
+export const objectDetector = new ObjectDetectorProcessor()

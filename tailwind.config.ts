@@ -1,6 +1,7 @@
 import type { Config } from 'tailwindcss'
 
 const config: Config = {
+  darkMode: 'class',
   content: [
     './pages/**/*.{js,ts,jsx,tsx,mdx}',
     './components/**/*.{js,ts,jsx,tsx,mdx}',
@@ -9,22 +10,45 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        // New Stitch Design System
+        primary: '#33ff86',
+        'primary-foreground': '#0a1a0f',
+        background: '#080808',
+        foreground: '#f8f8f8',
+        'subtle-foreground': '#a1a1a1',
+        'subtle-background': '#1c1c1c',
+        'interactive-hover': '#2e2e2e',
+        border: '#2e2e2e',
+        accent: '#E140E1',
+
+        // Legacy support (keeping for backward compatibility)
         dark: {
-          primary: '#0a0a0a',
-          secondary: '#111111',
-          tertiary: '#1a1a1a',
+          primary: '#080808',
+          secondary: '#1c1c1c',
+          tertiary: '#2e2e2e',
           border: 'rgba(255, 255, 255, 0.1)',
-        },
-        accent: {
-          blue: '#3b82f6',
-          purple: '#8b5cf6',
-          pink: '#ec4899',
-          orange: '#f97316',
-          green: '#10b981',
         },
       },
       fontFamily: {
+        display: ['Inter', 'sans-serif'],
         sans: ['Inter', 'system-ui', 'sans-serif'],
+      },
+      borderRadius: {
+        DEFAULT: '1rem',
+        lg: '2rem',
+        xl: '3rem',
+        full: '9999px',
+      },
+      boxShadow: {
+        // Stitch glow effects
+        glow: '0 0 20px 0px rgba(51, 255, 134, 0.2)',
+        'glow-sm': '0 0 10px 0px rgba(51, 255, 134, 0.15)',
+        'glow-hover': '0 0 30px 0px rgba(51, 255, 134, 0.3)',
+        'glow-lg': '0 0 45px 0px rgba(51, 255, 134, 0.4)',
+
+        // Accent glow
+        'accent-glow': '0 0 20px 0px rgba(225, 64, 225, 0.3)',
+        'accent-glow-hover': '0 0 30px 0px rgba(225, 64, 225, 0.4)',
       },
       animation: {
         'fade-in': 'fadeIn 0.6s ease-out',
@@ -34,6 +58,7 @@ const config: Config = {
         'shimmer': 'shimmer 2s infinite',
         'float': 'float 3s ease-in-out infinite',
         'glow': 'glow 2s ease-in-out infinite',
+        'pulse-glow': 'pulseGlow 2s ease-in-out infinite',
       },
       keyframes: {
         fadeIn: {
@@ -64,16 +89,13 @@ const config: Config = {
           '0%, 100%': { opacity: '0.5' },
           '50%': { opacity: '1' },
         },
+        pulseGlow: {
+          '0%, 100%': { boxShadow: '0 0 20px 0px rgba(51, 255, 134, 0.2)' },
+          '50%': { boxShadow: '0 0 30px 0px rgba(51, 255, 134, 0.4)' },
+        },
       },
       backdropBlur: {
         xs: '2px',
-      },
-      boxShadow: {
-        'glow-sm': '0 0 15px rgba(59, 130, 246, 0.3)',
-        'glow-md': '0 0 30px rgba(59, 130, 246, 0.3)',
-        'glow-lg': '0 0 45px rgba(59, 130, 246, 0.4)',
-        'glow-purple': '0 0 30px rgba(139, 92, 246, 0.3)',
-        'glow-pink': '0 0 30px rgba(236, 72, 153, 0.3)',
       },
     },
   },

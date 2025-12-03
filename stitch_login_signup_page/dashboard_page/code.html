@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AI Study Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<style type="text/tailwindcss">
+        :root {
+            --background: #0D0D0D;
+            --foreground: #F5F5F5;
+            --muted: #1A1A1A;
+            --muted-foreground: #A3A3A3;
+            --primary: #52FF86;
+            --primary-foreground: #0D0D0D;
+            --accent: #E140E1;
+        }
+    </style>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "var(--primary)",
+                        "primary-foreground": "var(--primary-foreground)",
+                        "background": "var(--background)",
+                        "foreground": "var(--foreground)",
+                        "muted": "var(--muted)",
+                        "muted-foreground": "var(--muted-foreground)",
+                        "accent": "var(--accent)"
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    boxShadow: {
+                        'primary-glow': '0 0 15px 0px rgba(82, 255, 134, 0.3)',
+                        'primary-glow-lg': '0 0 30px 5px rgba(82, 255, 134, 0.3)',
+                        'accent-glow': '0 0 15px 0px rgba(225, 64, 225, 0.3)',
+                    },
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background font-display text-foreground">
+<div class="flex h-screen">
+<aside class="w-64 bg-background p-4 flex flex-col justify-between border-r border-muted-foreground/10">
+<div class="flex flex-col gap-8">
+<div class="flex items-center gap-3">
+<div class="bg-primary rounded-full size-10 flex items-center justify-center shadow-primary-glow">
+<span class="material-symbols-outlined text-primary-foreground">auto_awesome</span>
+</div>
+<h1 class="text-foreground text-lg font-bold">StudyAI</h1>
+</div>
+<div class="flex flex-col gap-2">
+<div class="flex items-center gap-3 px-3 py-2 rounded-full bg-primary/20 ring-1 ring-inset ring-primary/50">
+<span class="material-symbols-outlined text-primary">dashboard</span>
+<p class="text-primary text-sm font-medium leading-normal">Dashboard</p>
+</div>
+<div class="flex items-center gap-3 px-3 py-2 rounded-full hover:bg-muted cursor-pointer transition-colors">
+<span class="material-symbols-outlined text-muted-foreground">bar_chart</span>
+<p class="text-muted-foreground text-sm font-medium leading-normal">Analytics</p>
+</div>
+<div class="flex items-center gap-3 px-3 py-2 rounded-full hover:bg-muted cursor-pointer transition-colors">
+<span class="material-symbols-outlined text-muted-foreground">settings</span>
+<p class="text-muted-foreground text-sm font-medium leading-normal">Settings</p>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-4">
+<div class="flex items-center gap-3">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="User avatar" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBhENi1AcOV9HnqUxk2fe8JJuS5kEnLHL3YmUWAM5_U4QwocXv595d_l6aoI702nTVAIQcZ-Jmdw-AGJlZ6x1tqOBO7fFJrQzccpximEvZZavYJiwVj6p_L8DRp04JCZl1yRFzwJWgdgFFos9myBCgvFRuRvu9SK9iD9aSA1Awowte4EYd1SvFfbekkfm6da3cV_iOIn2Khir5tP4o3B74RCITVvqxUEONc83WRTrrkENfrePKhoZy1wMBhmaePBNx2Bzh3iVisveU");'></div>
+<div class="flex flex-col">
+<h1 class="text-foreground text-base font-medium leading-normal">John Doe</h1>
+<p class="text-primary/80 text-sm font-normal leading-normal">Premium User</p>
+</div>
+</div>
+</div>
+</aside>
+<main class="flex-1 p-8 grid grid-cols-3 gap-8 bg-background">
+<div class="flex flex-col gap-8">
+<div class="flex flex-col gap-4 h-full">
+<h2 class="text-xl font-bold text-foreground">Today's Schedule</h2>
+<div class="bg-muted/50 p-4 rounded-lg border border-muted-foreground/10 h-full flex flex-col">
+<div class="flex items-center justify-between pb-4">
+<p class="text-foreground text-base font-bold leading-tight">Thursday, Oct 5</p>
+<button class="flex items-center gap-2 text-sm text-primary hover:text-primary/80 transition-colors font-medium">
+<span class="material-symbols-outlined text-base">add_circle</span>
+                                New Block
+                            </button>
+</div>
+<div class="flex-1 overflow-y-auto pr-2 relative">
+<div class="relative">
+<div class="space-y-0.5">
+<div class="h-20 flex" data-time="06:00">
+<div class="w-12 text-right pr-2 pt-[-4px] text-xs text-muted-foreground">6 AM</div>
+<div class="flex-1 border-t border-muted-foreground/10"></div>
+</div>
+<div class="h-20 flex" data-time="07:00">
+<div class="w-12 text-right pr-2 pt-[-4px] text-xs text-muted-foreground">7 AM</div>
+<div class="flex-1 border-t border-muted-foreground/10"></div>
+</div>
+<div class="h-20 flex" data-time="08:00">
+<div class="w-12 text-right pr-2 pt-[-4px] text-xs text-muted-foreground">8 AM</div>
+<div class="flex-1 border-t border-muted-foreground/10"></div>
+</div>
+<div class="h-20 flex" data-time="09:00">
+<div class="w-12 text-right pr-2 pt-[-4px] text-xs text-muted-foreground">9 AM</div>
+<div class="flex-1 border-t border-muted-foreground/10"></div>
+</div>
+<div class="h-20 flex" data-time="10:00">
+<div class="w-12 text-right pr-2 pt-[-4px] text-xs text-muted-foreground">10 AM</div>
+<div class="flex-1 border-t border-muted-foreground/10"></div>
+</div>
+<div class="h-20 flex" data-time="11:00">
+<div class="w-12 text-right pr-2 pt-[-4px] text-xs text-muted-foreground">11 AM</div>
+<div class="flex-1 border-t border-muted-foreground/10"></div>
+</div>
+<div class="h-20 flex" data-time="12:00">
+<div class="w-12 text-right pr-2 pt-[-4px] text-xs text-muted-foreground">12 PM</div>
+<div class="flex-1 border-t border-muted-foreground/10"></div>
+</div>
+<div class="h-20 flex" data-time="13:00">
+<div class="w-12 text-right pr-2 pt-[-4px] text-xs text-muted-foreground">1 PM</div>
+<div class="flex-1 border-t border-muted-foreground/10"></div>
+</div>
+<div class="h-20 flex" data-time="14:00">
+<div class="w-12 text-right pr-2 pt-[-4px] text-xs text-muted-foreground">2 PM</div>
+<div class="flex-1 border-t border-muted-foreground/10"></div>
+</div>
+<div class="h-20 flex" data-time="15:00">
+<div class="w-12 text-right pr-2 pt-[-4px] text-xs text-muted-foreground">3 PM</div>
+<div class="flex-1 border-t border-muted-foreground/10"></div>
+</div>
+</div>
+<div class="absolute inset-0 pl-12">
+<div class="absolute w-full" style="top: 122px; height: 182px;">
+<div class="h-full ml-2 mr-1 p-2 rounded-lg bg-background border-l-4 border-primary shadow-primary-glow cursor-pointer group hover:bg-primary/30 transition-colors">
+<p class="font-bold text-sm text-foreground">Quantum Physics</p>
+<p class="text-xs text-primary">Chapter 3 Review</p>
+<div class="absolute bottom-1 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<div class="w-4 h-2 rounded-full bg-foreground/50"></div>
+</div>
+</div>
+</div>
+<div class="absolute w-full" style="top: 305px; height: 121px;">
+<div class="h-full ml-2 mr-1 p-2 rounded-lg bg-background border-l-4 border-accent shadow-accent-glow cursor-pointer group hover:bg-accent/30 transition-colors">
+<p class="font-bold text-sm text-foreground">Calculus II</p>
+<p class="text-xs text-accent">Problem Set 5</p>
+<div class="absolute bottom-1 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<div class="w-4 h-2 rounded-full bg-foreground/50"></div>
+</div>
+</div>
+</div>
+<div class="absolute w-full ml-2 mr-1" style="top: 41px; height: 81px;">
+<div class="h-full p-2 rounded-lg bg-accent/20 border-2 border-dashed border-accent flex items-center justify-center">
+<p class="text-xs text-accent font-medium">06:30 - 07:30</p>
+</div>
+</div>
+<div class="absolute w-full" style="top: 528px; height: 101px;">
+<div class="h-full ml-2 mr-1 p-2 rounded-lg bg-background border-l-4 border-rose-400 cursor-pointer group hover:bg-rose-400/30 transition-colors">
+<p class="font-bold text-sm text-foreground">History</p>
+<p class="text-xs text-rose-400">Read Chapter 5</p>
+<div class="absolute bottom-1 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<div class="w-4 h-2 rounded-full bg-foreground/50"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="flex flex-col items-center justify-center gap-8">
+<div class="flex flex-col items-center justify-center gap-4">
+<div class="relative w-72 h-72 rounded-full flex items-center justify-center bg-muted border-8 border-primary/50 shadow-primary-glow-lg">
+<div class="absolute inset-0 rounded-full animate-pulse border-4 border-primary/50"></div>
+<div class="flex flex-col items-center">
+<h1 class="text-7xl font-bold text-foreground tracking-tighter">25:00</h1>
+<p class="text-primary text-xl font-medium">Work</p>
+</div>
+</div>
+<div class="flex gap-4">
+<button class="bg-primary text-primary-foreground font-bold py-3 px-8 rounded-full hover:bg-primary/80 transition-colors shadow-primary-glow">Start</button>
+<button class="bg-muted text-foreground font-bold py-3 px-8 rounded-full hover:bg-muted/80 transition-colors">Reset</button>
+</div>
+</div>
+<div class="w-full">
+<div class="bg-cover bg-center flex flex-col items-stretch justify-end rounded-xl pt-[132px] shadow-primary-glow border border-primary/20" data-alt="Abstract image of quantum physics" style='background-image: linear-gradient(0deg, rgba(13, 13, 13, 0.8) 0%, rgba(13, 13, 13, 0) 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuDMWpgDyL2QMUGTXKIWHfTyHNrOfIoKg5EnoZ5pL5AP6n9OaOQsDwvMYZF14JYNvMRvkrz6b7VnBA-ArIlCipafhS5sQNnaflFwZAoWnou6yh8WN2u3zVIvEW6W4WLU5sdK0EaZTnIfKdC2abzJTLQmJRhRCZauMLq4e7aUjgKamvD0alkhAbDHlSL7fJAnhESHXvU3AX_divDUCAivJOoRlcR_WZLlujJqqfrrsCmLw_quKQbP8NrLYTz7owdIPtTtOBc8cwavvI8");'>
+<div class="flex w-full items-end justify-between gap-4 p-4">
+<div class="flex max-w-[440px] flex-1 flex-col gap-1">
+<p class="text-foreground tracking-light text-2xl font-bold leading-tight max-w-[440px]">Quantum Physics</p>
+<p class="text-muted-foreground text-base font-medium leading-normal">Chapter 3 Review</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-8">
+<div class="flex flex-col gap-4">
+<h2 class="text-xl font-bold text-foreground">AI Coach</h2>
+<div class="aspect-video w-full rounded-lg bg-muted border border-muted-foreground/10 flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Webcam feed showing a person studying" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAVUBSCPXyYamShEAky4QNHqppVjI-0rcM-Rs9JCkDXWladLSMUxorFBGLfn13uN9K_-zTuNXuW0_vDJpCoZhuHebZL63H3lJc6dn_xP65ncnKTLRDlFZYw0-vghISalXRJvjAffmdl5QajUsZGxHYV4pVsn3a5OZR_IZvqLdpEgRBwkv2N5GAB0KisZJONXnlgUTlgjIiTvY7kd8hyy8YQnFYJuOFvYTYdL1ywvWNNGLmFfqaZ4k-BuzsxwiEfv1B9fa4P_afhWqU"/>
+</div>
+</div>
+<div class="flex flex-col gap-4">
+<h2 class="text-xl font-bold text-foreground">Daily Summary</h2>
+<div class="bg-muted/50 p-6 rounded-lg border border-muted-foreground/10 flex flex-col gap-6">
+<div class="grid grid-cols-2 gap-4">
+<div class="flex flex-col gap-1 group cursor-pointer">
+<div class="flex items-center justify-between">
+<p class="text-muted-foreground text-sm group-hover:text-primary transition-colors">Total Study Time</p>
+<span class="material-symbols-outlined text-muted-foreground group-hover:text-primary transition-colors text-lg">expand_more</span>
+</div>
+<p class="text-primary text-3xl font-bold">4h 32m</p>
+<div class="h-2 bg-background rounded-full mt-2 overflow-hidden">
+<div class="h-full bg-primary w-3/4"></div>
+</div>
+</div>
+<div class="flex flex-col gap-1 group cursor-pointer">
+<div class="flex items-center justify-between">
+<p class="text-muted-foreground text-sm group-hover:text-primary transition-colors">Tasks Completed</p>
+<span class="material-symbols-outlined text-muted-foreground group-hover:text-primary transition-colors text-lg">expand_more</span>
+</div>
+<p class="text-primary text-3xl font-bold">5</p>
+<div class="h-2 bg-background rounded-full mt-2 overflow-hidden">
+<div class="h-full bg-primary w-2/3"></div>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-4 pt-4 border-t border-muted-foreground/20">
+<p class="text-muted-foreground text-sm">Time Distribution</p>
+<div class="flex items-center gap-4 text-xs text-foreground">
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-primary"></div>
+<span>Quantum Physics: 2h 15m</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-accent"></div>
+<span>Calculus II: 1h 30m</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-rose-400"></div>
+<span>History: 47m</span>
+</div>
+</div>
+<div class="h-4 bg-background rounded-full flex overflow-hidden">
+<div class="h-full bg-primary" style="width: 50%"></div>
+<div class="h-full bg-accent" style="width: 33%"></div>
+<div class="h-full bg-rose-400" style="width: 17%"></div>
+</div>
+</div>
+<div class="flex flex-col gap-3 pt-4 border-t border-muted-foreground/20">
+<p class="text-muted-foreground text-sm">AI Coaching Insights</p>
+<div class="flex justify-between items-center bg-background p-3 rounded-md hover:bg-muted/70 transition-colors cursor-pointer">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">accessibility_new</span>
+<p class="text-foreground font-medium text-sm">Posture Corrections</p>
+</div>
+<p class="text-foreground font-bold text-lg">12</p>
+</div>
+<div class="flex justify-between items-center bg-background p-3 rounded-md hover:bg-muted/70 transition-colors cursor-pointer">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">phone_iphone</span>
+<p class="text-foreground font-medium text-sm">Phone Detections</p>
+</div>
+<p class="text-foreground font-bold text-lg">3</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<div class="absolute bottom-8 right-8 bg-muted text-foreground px-6 py-4 rounded-lg flex items-center gap-4 shadow-2xl border border-muted-foreground/20">
+<span class="material-symbols-outlined text-primary">thumb_up</span>
+<p class="text-sm font-medium">Good posture!</p>
+</div>
+</div>
+</body></html>

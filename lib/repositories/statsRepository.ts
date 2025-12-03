@@ -8,7 +8,7 @@ export interface DailyFocusStat {
 }
 
 export interface DistractionStat {
-  type: 'posture' | 'phone' | 'absence'
+  type: 'posture' | 'phone' | 'absence' | 'drowsiness'
   count: number
   percentage: number
 }
@@ -47,20 +47,34 @@ export const statsRepository = {
     // Group by date
     const grouped = new Map<string, { totalMinutes: number; count: number }>()
 
-    sessions?.forEach((session) => {
-      const dateKey = format(new Date(session.start_time), 'yyyy-MM-dd')
-      const existing = grouped.get(dateKey) || { totalMinutes: 0, count: 0 }
-      grouped.set(dateKey, {
-        totalMinutes: existing.totalMinutes + session.duration,
-        count: existing.count + 1,
+      ; (sessions as any[])?.forEach((session) => {
+        const dateKey = format(new Date(session.start_time), 'yyyy-MM-dd')
+        const existing = grouped.get(dateKey) || { totalMinutes: 0, count: 0 }
+        grouped.set(dateKey, {
+          totalMinutes: existing.totalMinutes + session.duration,
+          count: existing.count + 1,
+        })
       })
-    })
 
-    return Array.from(grouped.entries()).map(([date, stats]) => ({
-      date,
-      totalMinutes: stats.totalMinutes,
-      sessionCount: stats.count,
-    }))
+    // Fill in missing dates
+    const result: DailyFocusStat[] = []
+    const current = new Date(startDate)
+    const end = new Date(endDate)
+
+    while (current <= end) {
+      const dateKey = format(current, 'yyyy-MM-dd')
+      const stats = grouped.get(dateKey) || { totalMinutes: 0, count: 0 }
+
+      result.push({
+        date: dateKey,
+        totalMinutes: stats.totalMinutes,
+        sessionCount: stats.count,
+      })
+
+      current.setDate(current.getDate() + 1)
+    }
+
+    return result
   },
 
   /**
@@ -80,21 +94,22 @@ export const statsRepository = {
       posture: 0,
       phone: 0,
       absence: 0,
+      drowsiness: 0,
     }
 
-    sessions?.forEach((session) => {
-      const distractions = session.distractions as any[] || []
-      distractions.forEach((d) => {
-        if (d.type in counts) {
-          counts[d.type]++
-        }
+      ; (sessions as any[])?.forEach((session) => {
+        const distractions = session.distractions as any[] || []
+        distractions.forEach((d: any) => {
+          if (d.type in counts) {
+            counts[d.type]++
+          }
+        })
       })
-    })
 
     const total = Object.values(counts).reduce((sum, count) => sum + count, 0)
 
     return Object.entries(counts).map(([type, count]) => ({
-      type: type as 'posture' | 'phone' | 'absence',
+      type: type as 'posture' | 'phone' | 'absence' | 'drowsiness',
       count,
       percentage: total > 0 ? (count / total) * 100 : 0,
     }))
@@ -107,7 +122,7 @@ export const statsRepository = {
     const { data, error } = await supabase.rpc('get_category_stats', {
       start_date: format(startDate, 'yyyy-MM-dd'),
       end_date: format(endDate, 'yyyy-MM-dd'),
-    })
+    } as any)
 
     if (error) {
       // Fallback: manual aggregation if RPC doesn't exist
@@ -129,23 +144,23 @@ export const statsRepository = {
         distractionCount: number
       }>()
 
-      sessions?.forEach((session) => {
-        const task = tasks?.find(t => t.id === session.task_id)
-        const category = task?.category || '기타'
-        const existing = grouped.get(category) || {
-          totalMinutes: 0,
-          sessionCount: 0,
-          distractionCount: 0,
-        }
+        ; (sessions as any[])?.forEach((session) => {
+          const task = (tasks as any[])?.find(t => t.id === session.task_id)
+          const category = task?.category || '기타'
+          const existing = grouped.get(category) || {
+            totalMinutes: 0,
+            sessionCount: 0,
+            distractionCount: 0,
+          }
 
-        const distractions = (session.distractions as any[] || []).length
+          const distractions = (session.distractions as any[] || []).length
 
-        grouped.set(category, {
-          totalMinutes: existing.totalMinutes + session.duration,
-          sessionCount: existing.sessionCount + 1,
-          distractionCount: existing.distractionCount + distractions,
+          grouped.set(category, {
+            totalMinutes: existing.totalMinutes + session.duration,
+            sessionCount: existing.sessionCount + 1,
+            distractionCount: existing.distractionCount + distractions,
+          })
         })
-      })
 
       return Array.from(grouped.entries()).map(([category, stats]) => ({
         category,
@@ -172,7 +187,7 @@ export const statsRepository = {
 
     if (error) throw error
 
-    return (tasks || []).map((task) => ({
+    return ((tasks as any[]) || []).map((task) => ({
       taskId: task.id,
       title: task.title,
       category: task.category,

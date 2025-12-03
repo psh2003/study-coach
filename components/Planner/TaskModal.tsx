@@ -55,13 +55,13 @@ export default function TaskModal({
   }
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
-        <div className="flex items-center justify-between p-6 border-b">
-          <h3 className="text-xl font-bold text-gray-900">학습 일정 추가</h3>
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-[#1A1A1A] rounded-lg shadow-[0_0_30px_0px_rgba(82,255,134,0.2)] border border-[#A3A3A3]/20 max-w-md w-full">
+        <div className="flex items-center justify-between p-6 border-b border-[#A3A3A3]/20">
+          <h3 className="text-xl font-bold text-[#F5F5F5]">학습 일정 추가</h3>
           <button
             onClick={onClose}
-            className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-1 hover:bg-[#0D0D0D] rounded-lg transition-colors text-[#A3A3A3] hover:text-[#F5F5F5]"
           >
             <X className="w-5 h-5" />
           </button>
@@ -69,7 +69,7 @@ export default function TaskModal({
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-[#A3A3A3] mb-2">
               할 일 이름 *
             </label>
             <input
@@ -79,13 +79,13 @@ export default function TaskModal({
                 setFormData({ ...formData, title: e.target.value })
               }
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              className="w-full px-4 py-3 bg-[#0D0D0D] border border-[#A3A3A3]/30 rounded-lg text-[#F5F5F5] placeholder-[#A3A3A3]/50 focus:ring-2 focus:ring-[#52FF86] focus:border-[#52FF86] transition-all"
               placeholder="예: 알고리즘 문제 풀기"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-[#A3A3A3] mb-2">
               과목/카테고리
             </label>
             <select
@@ -93,17 +93,17 @@ export default function TaskModal({
               onChange={(e) =>
                 setFormData({ ...formData, category: e.target.value })
               }
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              className="w-full px-4 py-3 bg-[#0D0D0D] border border-[#A3A3A3]/30 rounded-lg text-[#F5F5F5] focus:ring-2 focus:ring-[#52FF86] focus:border-[#52FF86] transition-all"
             >
               {CATEGORIES.map((cat) => (
-                <option key={cat} value={cat}>{cat}</option>
+                <option key={cat} value={cat} className="bg-[#0D0D0D] text-[#F5F5F5]">{cat}</option>
               ))}
             </select>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-[#A3A3A3] mb-2">
                 시작 시간
               </label>
               <input
@@ -113,12 +113,12 @@ export default function TaskModal({
                   setFormData({ ...formData, start_time: e.target.value })
                 }
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="w-full px-4 py-3 bg-[#0D0D0D] border border-[#A3A3A3]/30 rounded-lg text-[#F5F5F5] focus:ring-2 focus:ring-[#52FF86] focus:border-[#52FF86] transition-all"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-[#A3A3A3] mb-2">
                 종료 시간
               </label>
               <input
@@ -128,16 +128,16 @@ export default function TaskModal({
                   setFormData({ ...formData, end_time: e.target.value })
                 }
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="w-full px-4 py-3 bg-[#0D0D0D] border border-[#A3A3A3]/30 rounded-lg text-[#F5F5F5] focus:ring-2 focus:ring-[#52FF86] focus:border-[#52FF86] transition-all"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-[#A3A3A3] mb-2">
               예상 소요 시간
             </label>
-            <div className="text-lg font-semibold text-primary-600">
+            <div className="text-lg font-semibold text-[#52FF86]">
               {calculateDuration()}분
             </div>
           </div>
@@ -146,13 +146,13 @@ export default function TaskModal({
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg font-semibold hover:bg-gray-50 transition-colors"
+              className="flex-1 px-4 py-3 bg-[#0D0D0D] border border-[#A3A3A3]/30 rounded-lg font-semibold text-[#F5F5F5] hover:bg-[#0D0D0D]/80 hover:border-[#A3A3A3]/50 transition-all"
             >
               취소
             </button>
             <button
               type="submit"
-              className="flex-1 px-4 py-2 bg-primary-600 text-white rounded-lg font-semibold hover:bg-primary-700 transition-colors"
+              className="flex-1 px-4 py-3 bg-[#52FF86] text-[#0D0D0D] rounded-lg font-bold hover:bg-[#52FF86]/80 transition-all shadow-[0_0_15px_0px_rgba(82,255,134,0.3)]"
             >
               저장
             </button>

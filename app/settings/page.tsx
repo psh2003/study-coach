@@ -6,6 +6,7 @@ import { motion } from 'framer-motion'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { ArrowLeft, User, Bell, Palette, Database, Save, Brain } from 'lucide-react'
 import { toast } from 'sonner'
+import { userRepository, UserProfile } from '@/lib/repositories/userRepository'
 
 type Tab = 'profile' | 'preferences' | 'categories' | 'data'
 
@@ -26,6 +27,11 @@ export default function SettingsPage() {
   const [notificationsEnabled, setNotificationsEnabled] = useState(true)
   const [soundEnabled, setSoundEnabled] = useState(true)
 
+  // Categories
+  const [categories, setCategories] = useState<string[]>(['MATH', 'ENGLISH', 'SCIENCE', 'OTHER'])
+  const [newCategory, setNewCategory] = useState('')
+  const [isAddingCategory, setIsAddingCategory] = useState(false)
+
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       setCursorPos({ x: e.clientX, y: e.clientY })
@@ -40,6 +46,18 @@ export default function SettingsPage() {
     } else if (user) {
       setName(user.user_metadata?.name || '')
       setEmail(user.email || '')
+
+      const prefs = user.user_metadata?.preferences
+      if (prefs) {
+        setFocusDuration(prefs.focusDuration ?? 25)
+        setBreakDuration(prefs.breakDuration ?? 5)
+        setNotificationsEnabled(prefs.notificationsEnabled ?? true)
+        setSoundEnabled(prefs.soundEnabled ?? true)
+      }
+
+      if (user.user_metadata?.categories) {
+        setCategories(user.user_metadata.categories)
+      }
     }
   }, [user, isLoading, router])
 
@@ -66,16 +84,41 @@ export default function SettingsPage() {
   ]
 
   const handleSave = async () => {
+    if (!user) return
+
     setIsSaving(true)
     try {
-      // TODO: Implement actual save logic with Supabase
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      const updates: Partial<UserProfile> = {
+        name,
+        categories,
+        preferences: {
+          focusDuration,
+          breakDuration,
+          notificationsEnabled,
+          soundEnabled
+        }
+      }
+
+      await userRepository.updateProfile(user.id, updates)
       toast.success('Settings saved successfully')
     } catch (error) {
+      console.error('Failed to save settings:', error)
       toast.error('Failed to save settings')
     } finally {
       setIsSaving(false)
     }
+  }
+
+  const handleAddCategory = () => {
+    if (newCategory.trim()) {
+      setCategories([...categories, newCategory.trim().toUpperCase()])
+      setNewCategory('')
+      setIsAddingCategory(false)
+    }
+  }
+
+  const handleDeleteCategory = (category: string) => {
+    setCategories(categories.filter(c => c !== category))
   }
 
   return (
@@ -359,23 +402,55 @@ export default function SettingsPage() {
                     <p className="text-white/60 mb-6 font-light tracking-wide">Add or modify study categories</p>
 
                     <div className="space-y-4">
-                      {['MATH', 'ENGLISH', 'SCIENCE', 'OTHER'].map((category) => (
+                      {categories.map((category) => (
                         <div key={category} className="flex items-center justify-between p-4 glass-strong rounded-xl">
                           <span className="font-light tracking-wider">{category}</span>
                           <div className="flex gap-2">
                             <button className="px-3 py-1 glass rounded-lg hover:glass-strong transition-all text-sm font-light tracking-wider">
                               EDIT
                             </button>
-                            <button className="px-3 py-1 bg-accent-pink/20 text-accent-pink border border-accent-pink/30 rounded-lg hover:bg-accent-pink/30 transition-all text-sm font-light tracking-wider">
+                            <button
+                              onClick={() => handleDeleteCategory(category)}
+                              className="px-3 py-1 bg-accent-pink/20 text-accent-pink border border-accent-pink/30 rounded-lg hover:bg-accent-pink/30 transition-all text-sm font-light tracking-wider"
+                            >
                               DELETE
                             </button>
                           </div>
                         </div>
                       ))}
 
-                      <button className="w-full py-3 border-2 border-dashed border-white/20 rounded-xl text-white/60 hover:border-accent-blue hover:text-accent-blue transition-all font-light tracking-wider">
-                        + ADD CATEGORY
-                      </button>
+                      {isAddingCategory ? (
+                        <div className="flex gap-2">
+                          <input
+                            type="text"
+                            value={newCategory}
+                            onChange={(e) => setNewCategory(e.target.value)}
+                            className="flex-1 px-4 py-3 glass-strong rounded-xl border border-white/10 focus:border-accent-blue transition-all font-light bg-transparent text-white"
+                            placeholder="New Category Name"
+                            autoFocus
+                            onKeyDown={(e) => e.key === 'Enter' && handleAddCategory()}
+                          />
+                          <button
+                            onClick={handleAddCategory}
+                            className="px-6 py-3 bg-accent-blue rounded-xl hover:bg-accent-blue/80 transition-colors font-light tracking-wider"
+                          >
+                            ADD
+                          </button>
+                          <button
+                            onClick={() => setIsAddingCategory(false)}
+                            className="px-6 py-3 glass rounded-xl hover:glass-strong transition-colors font-light tracking-wider"
+                          >
+                            CANCEL
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => setIsAddingCategory(true)}
+                          className="w-full py-3 border-2 border-dashed border-white/20 rounded-xl text-white/60 hover:border-accent-blue hover:text-accent-blue transition-all font-light tracking-wider"
+                        >
+                          + ADD CATEGORY
+                        </button>
+                      )}
                     </div>
                   </div>
                 )}

@@ -15,17 +15,21 @@ export function useFocusSession() {
     resetSession,
   } = useFocusStore()
 
-  const saveSession = useCallback(async (duration: number) => {
-    if (!currentTaskId || !sessionStartTime) {
-      throw new Error('No active session to save')
+  const saveSession = useCallback(async (duration: number, taskId?: string, startTime?: Date) => {
+    const targetTaskId = taskId || currentTaskId
+    const targetStartTime = startTime || sessionStartTime
+
+    if (!targetTaskId || !targetStartTime) {
+      console.warn('No active session or task ID to save')
+      return null
     }
 
     const endTime = new Date()
     const sessionInput: FocusSessionInput = {
-      task_id: currentTaskId,
-      start_time: sessionStartTime.toISOString(),
+      task_id: targetTaskId,
+      start_time: targetStartTime.toISOString(),
       end_time: endTime.toISOString(),
-      duration: Math.floor(duration / 60), // Convert seconds to minutes
+      duration: Math.max(1, Math.round(duration / 60)), // Convert seconds to minutes, min 1 minute
       distractions,
     }
 

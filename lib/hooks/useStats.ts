@@ -59,8 +59,8 @@ function getDefaultDateRange(type: DateRangeType) {
       }
     case 'weekly':
       return {
-        start: startOfWeek(now),
-        end: endOfWeek(now),
+        start: startOfWeek(now, { weekStartsOn: 1 }),
+        end: endOfWeek(now, { weekStartsOn: 1 }),
       }
     case 'monthly':
       return {
