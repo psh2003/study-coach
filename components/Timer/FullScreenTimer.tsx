@@ -59,6 +59,7 @@ export default function FullScreenTimer() {
 
   const { saveSession } = useFocusSession()
   const [isSaving, setIsSaving] = useState(false)
+  const [newBadges, setNewBadges] = useState<any[]>([])
 
   // ...
 
@@ -68,12 +69,31 @@ export default function FullScreenTimer() {
       // Save session data
       if (elapsedTime > 0) {
         await saveSession(elapsedTime)
+
+        // Check for new badges
+        const { data: { user } } = await import('@/lib/supabase/client').then(m => m.supabase.auth.getUser())
+        if (user) {
+          const { gamificationRepository } = await import('@/lib/repositories/gamificationRepository')
+          const unlockedBadges = await gamificationRepository.checkAndUnlockBadges(user.id, elapsedTime)
+
+          if (unlockedBadges.length > 0) {
+            setNewBadges(unlockedBadges)
+            // Delay completion slightly to show badge if needed, or handle in UI overlay
+            // For now, we'll just log it and maybe show an alert before redirecting
+            // Ideally, we should show a modal. Let's use a simple alert for MVP or state to show modal.
+            // But since completeSession clears state, we might lose it.
+            // Better approach: Show modal first, then complete session on modal close.
+            // But completeSession is called immediately here.
+
+            // Let's just alert for now as a simple feedback
+            const badgeNames = unlockedBadges.map(b => b.name).join(', ')
+            alert(`🎉 축하합니다! 새로운 배지를 획득했습니다: ${badgeNames}`)
+          }
+        }
       }
       completeSession()
     } catch (error) {
       console.error('Failed to save session:', error)
-      // Still complete the session locally even if save fails?
-      // Or show error? For now, complete it.
       completeSession()
     } finally {
       setIsSaving(false)

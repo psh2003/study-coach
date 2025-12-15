@@ -18,15 +18,15 @@ export default function Home() {
         </div>
         <div className="flex flex-1 justify-end gap-8">
           <div className="hidden md:flex items-center gap-9">
-            <a className="text-white text-sm font-medium leading-normal hover:text-primary transition-colors" href="#features">Features</a>
-            <a className="text-white text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">About</a>
-            <a className="text-white text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Pricing</a>
+            <a className="text-white text-sm font-medium leading-normal hover:text-primary transition-colors" href="#features">기능</a>
+            <a className="text-white text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">소개</a>
+            <a className="text-white text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">가격</a>
           </div>
           <button
             onClick={() => router.push('/auth/login?view=signup')}
             className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition-colors"
           >
-            <span className="truncate">Sign Up</span>
+            <span className="truncate">회원가입</span>
           </button>
         </div>
       </header>
@@ -40,10 +40,10 @@ export default function Home() {
                 <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1593349480504-802c09f38e38?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')] bg-cover bg-center opacity-20"></div>
                 <div className="flex flex-col gap-2 text-center z-10">
                   <h1 className="text-white text-4xl md:text-6xl font-black leading-tight tracking-tighter">
-                    Unlock Your Full Potential with AI-Powered Study Habits.
+                    AI 기반 학습 습관으로<br />잠재력을 깨우세요.
                   </h1>
                   <h2 className="text-[#eaeaea] text-base md:text-xl font-normal leading-normal max-w-2xl mx-auto">
-                    Analyze your focus. Optimize your learning. Achieve your goals.
+                    집중력을 분석하고, 학습을 최적화하여 목표를 달성하세요.
                   </h2>
                 </div>
                 <div className="flex-wrap gap-4 flex justify-center z-10">
@@ -51,13 +51,13 @@ export default function Home() {
                     onClick={() => router.push('/auth/login?view=signup')}
                     className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-12 px-6 bg-primary text-white text-base font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition-all duration-300 transform hover:scale-105 shadow-[0_0_20px_theme(colors.primary)]"
                   >
-                    <span className="truncate">Start Your Free Trial</span>
+                    <span className="truncate">무료 체험 시작하기</span>
                   </button>
                   <button
                     onClick={() => router.push('#demo')}
                     className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-12 px-6 bg-white/10 text-white text-base font-bold leading-normal tracking-[0.015em] border border-white/20 hover:bg-white/20 transition-colors"
                   >
-                    <span className="truncate">See How It Works</span>
+                    <span className="truncate">사용법 보기</span>
                   </button>
                 </div>
               </div>
@@ -70,10 +70,10 @@ export default function Home() {
           <div className="flex flex-col gap-10 @container">
             <div className="flex flex-col gap-4 text-center">
               <h1 className="text-white tracking-tighter text-4xl md:text-5xl font-black leading-tight max-w-3xl mx-auto">
-                See Your Focus in a New Light.
+                새로운 관점에서 집중력을 확인하세요.
               </h1>
               <p className="text-[#eaeaea] text-lg font-normal leading-normal max-w-3xl mx-auto">
-                Our AI analyzes your study sessions to provide actionable insights into your focus and distraction patterns, empowering you to optimize your learning environment.
+                AI가 학습 세션을 분석하여 집중 및 주의 산만 패턴에 대한 실질적인 인사이트를 제공하고, 학습 환경을 최적화할 수 있도록 돕습니다.
               </p>
             </div>
             <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-6 p-0">
@@ -82,9 +82,9 @@ export default function Home() {
                   <span className="material-symbols-outlined" style={{ fontSize: '32px' }}>visibility</span>
                 </div>
                 <div className="flex flex-col gap-1">
-                  <h2 className="text-white text-xl font-bold leading-tight">AI Computer Vision</h2>
+                  <h2 className="text-white text-xl font-bold leading-tight">AI 컴퓨터 비전</h2>
                   <p className="text-[#9393c8] text-base font-normal leading-normal">
-                    Our AI analyzes your study sessions to provide insights into your focus and distraction patterns, helping you understand where you can improve.
+                    AI가 학습 세션을 분석하여 집중 및 주의 산만 패턴에 대한 인사이트를 제공하고, 개선할 부분을 파악하도록 돕습니다.
                   </p>
                 </div>
               </div>
@@ -93,9 +93,9 @@ export default function Home() {
                   <span className="material-symbols-outlined" style={{ fontSize: '32px' }}>event_available</span>
                 </div>
                 <div className="flex flex-col gap-1">
-                  <h2 className="text-white text-xl font-bold leading-tight">Study Planner Integration</h2>
+                  <h2 className="text-white text-xl font-bold leading-tight">스터디 플래너 연동</h2>
                   <p className="text-[#9393c8] text-base font-normal leading-normal">
-                    The AI insights are integrated into a smart study planner to create effective schedules tailored to your unique learning style and goals.
+                    AI 인사이트가 스마트 스터디 플래너와 연동되어 사용자의 고유한 학습 스타일과 목표에 맞춘 효과적인 일정을 생성합니다.
                   </p>
                 </div>
               </div>
@@ -104,9 +104,9 @@ export default function Home() {
                   <span className="material-symbols-outlined" style={{ fontSize: '32px' }}>school</span>
                 </div>
                 <div className="flex flex-col gap-1">
-                  <h2 className="text-white text-xl font-bold leading-tight">For Ambitious Students and Professionals</h2>
+                  <h2 className="text-white text-xl font-bold leading-tight">열정적인 학생과 전문가를 위해</h2>
                   <p className="text-[#9393c8] text-base font-normal leading-normal">
-                    Whether you're a university student, a remote worker, or a lifelong learner, Study Coach is designed to help you succeed.
+                    대학생, 원격 근무자, 평생 학습자 등 누구에게나 Study Coach는 성공을 돕기 위해 설계되었습니다.
                   </p>
                 </div>
               </div>
@@ -120,7 +120,7 @@ export default function Home() {
             <div className="flex flex-col justify-end gap-6 py-10 @[480px]:gap-8 @[480px]:py-20 bg-[#1a1a32]/30 rounded-xl">
               <div className="flex flex-col gap-2 text-center">
                 <h1 className="text-white tracking-tighter text-4xl md:text-5xl font-black leading-tight max-w-3xl mx-auto">
-                  Ready to Revolutionize Your Work?
+                  학습 방식을 혁신할 준비가 되셨나요?
                 </h1>
               </div>
               <div className="flex flex-1 justify-center mt-4">
@@ -129,7 +129,7 @@ export default function Home() {
                     onClick={() => router.push('/auth/login?view=signup')}
                     className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-12 px-6 bg-primary text-white text-base font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition-all duration-300 transform hover:scale-105 shadow-[0_0_20px_theme(colors.primary)]"
                   >
-                    <span className="truncate">Get Started Now</span>
+                    <span className="truncate">지금 시작하기</span>
                   </button>
                 </div>
               </div>
@@ -141,8 +141,8 @@ export default function Home() {
       {/* Footer */}
       <footer className="flex flex-col gap-6 px-5 py-10 text-center @container border-t border-solid border-[#242447]">
         <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 @[480px]:flex-row @[480px]:justify-around">
-          <a className="text-[#9393c8] text-sm font-normal leading-normal min-w-40 hover:text-white" href="#">Terms of Service</a>
-          <a className="text-[#9393c8] text-sm font-normal leading-normal min-w-40 hover:text-white" href="#">Privacy Policy</a>
+          <a className="text-[#9393c8] text-sm font-normal leading-normal min-w-40 hover:text-white" href="#">이용 약관</a>
+          <a className="text-[#9393c8] text-sm font-normal leading-normal min-w-40 hover:text-white" href="#">개인정보 처리방침</a>
         </div>
         <div className="flex flex-wrap justify-center gap-6">
           <a className="text-[#9393c8] hover:text-white transition-colors" href="#">

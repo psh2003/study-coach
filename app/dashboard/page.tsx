@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/lib/hooks/useAuth'
 import QuickStartButton from '@/components/Timer/QuickStartButton'
@@ -8,11 +8,18 @@ import QuickAddTask from '@/components/Planner/QuickAddTask'
 import { usePlannerStore } from '@/lib/store/usePlannerStore'
 import { motion } from 'framer-motion'
 import { Calendar, CheckCircle, Circle } from 'lucide-react'
+import { gamificationRepository, StreakInfo } from '@/lib/repositories/gamificationRepository'
+import StreakCard from '@/components/Dashboard/StreakCard'
+import BadgeList from '@/components/Dashboard/BadgeList'
 
 export default function DashboardPage() {
   const { user, isLoading, signOut } = useAuth()
   const router = useRouter()
   const { tasks, toggleTask, fetchTasks } = usePlannerStore()
+
+  const [streakInfo, setStreakInfo] = useState<StreakInfo>({ currentStreak: 0, longestStreak: 0, lastActivityDate: null })
+  const [earnedBadges, setEarnedBadges] = useState<string[]>([])
+  const [loadingGamification, setLoadingGamification] = useState(true)
 
   // Get today's tasks
   const today = new Date().toISOString().split('T')[0]
@@ -25,6 +32,27 @@ export default function DashboardPage() {
       fetchTasks(today)
     }
   }, [user, isLoading, router, today, fetchTasks])
+
+  useEffect(() => {
+    async function loadGamificationData() {
+      if (user) {
+        try {
+          const [streak, badges] = await Promise.all([
+            gamificationRepository.getStreak(user.id),
+            gamificationRepository.getEarnedBadges(user.id)
+          ])
+          setStreakInfo(streak)
+          setEarnedBadges(badges)
+        } catch (error) {
+          console.error('Failed to load gamification data:', error)
+        } finally {
+          setLoadingGamification(false)
+        }
+      }
+    }
+
+    loadGamificationData()
+  }, [user])
 
   if (isLoading) {
     return (
@@ -94,7 +122,6 @@ export default function DashboardPage() {
       {/* Main Content - Centered Single Column */}
       <main className="flex-1 p-8 overflow-y-auto bg-[#0D0D0D]">
         <div className="max-w-2xl mx-auto flex flex-col gap-8">
-          {/* Page Header */}
           <div className="flex flex-col gap-2">
             <h1 className="text-3xl font-bold text-[#F5F5F5]">오늘의 집중</h1>
             <div className="flex items-center gap-2 text-[#A3A3A3]">
@@ -109,6 +136,16 @@ export default function DashboardPage() {
               </p>
             </div>
           </div>
+
+          {/* Streak Card */}
+          <StreakCard
+            currentStreak={streakInfo.currentStreak}
+            longestStreak={streakInfo.longestStreak}
+            loading={loadingGamification}
+          />
+
+          {/* Badges Section */}
+          <BadgeList earnedBadgeCodes={earnedBadges} loading={loadingGamification} />
 
           {/* Quick Start Button */}
           <QuickStartButton />

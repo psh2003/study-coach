@@ -1,18 +1,21 @@
 <!DOCTYPE html>
 
-<html class="dark" lang="en"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Study Coach</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<style>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Study Coach</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700;800&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <style>
         .material-symbols-outlined {
             font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24
         }
     </style>
-<script id="tailwind-config">
+    <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
             theme: {
@@ -31,141 +34,191 @@
         }
     </script>
 </head>
+
 <body class="bg-background-dark text-white font-display">
-<div class="relative flex h-auto min-h-screen w-full flex-col overflow-x-hidden">
-<div class="layout-container flex h-full grow flex-col">
-<div class="flex flex-1 justify-center">
-<div class="layout-content-container flex flex-col max-w-[960px] flex-1">
-<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#242447] px-10 py-3 fixed top-0 left-0 right-0 z-50 bg-background-dark/80 backdrop-blur-sm">
-<div class="flex items-center gap-4 text-white">
-<div class="text-primary">
-<span class="material-symbols-outlined" style="font-size: 24px;">auto_awesome</span>
-</div>
-<h2 class="text-white text-lg font-bold leading-tight tracking-[-0.015em]">Study Coach</h2>
-</div>
-<div class="flex flex-1 justify-end gap-8">
-<div class="hidden md:flex items-center gap-9">
-<a class="text-white text-sm font-medium leading-normal hover:text-primary transition-colors" href="#features">Features</a>
-<a class="text-white text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">About</a>
-<a class="text-white text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Pricing</a>
-</div>
-<button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition-colors">
-<span class="truncate">Sign Up</span>
-</button>
-</div>
-</header>
-<main class="mt-20">
-<div class="px-4 md:px-10 py-5">
-<div class="@container">
-<div class="@[480px]:p-4">
-<div class="flex min-h-[calc(100vh-120px)] flex-col gap-6 bg-cover bg-center bg-no-repeat @[480px]:gap-8 items-center justify-center p-4 relative" data-alt="Abstract 3D rendering of a neural network structure in vibrant blue and purple hues on a dark background.">
-<div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1593349480504-802c09f38e38?q=80&amp;w=2670&amp;auto=format&amp;fit=crop&amp;ixlib=rb-4.0.3&amp;ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')] bg-cover bg-center opacity-20"></div>
-<div class="flex flex-col gap-2 text-center z-10">
-<h1 class="text-white text-4xl md:text-6xl font-black leading-tight tracking-tighter">
-                                            Unlock Your Full Potential with AI-Powered Study Habits.
-                                        </h1>
-<h2 class="text-[#eaeaea] text-base md:text-xl font-normal leading-normal max-w-2xl mx-auto">
-                                            Analyze your focus. Optimize your learning. Achieve your goals.
-                                        </h2>
-</div>
-<div class="flex-wrap gap-4 flex justify-center z-10">
-<button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-12 px-6 bg-primary text-white text-base font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition-all duration-300 transform hover:scale-105 shadow-[0_0_20px_theme(colors.primary)]">
-<span class="truncate">Start Your Free Trial</span>
-</button>
-<button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-12 px-6 bg-white/10 text-white text-base font-bold leading-normal tracking-[0.015em] border border-white/20 hover:bg-white/20 transition-colors">
-<span class="truncate">See How It Works</span>
-</button>
-</div>
-</div>
-</div>
-</div>
-</div>
-<section class="px-4 md:px-10 py-20" id="features">
-<div class="flex flex-col gap-10 @container">
-<div class="flex flex-col gap-4 text-center">
-<h1 class="text-white tracking-tighter text-4xl md:text-5xl font-black leading-tight max-w-3xl mx-auto">
-                                    See Your Focus in a New Light.
-                                </h1>
-<p class="text-[#eaeaea] text-lg font-normal leading-normal max-w-3xl mx-auto">
-                                    Our AI analyzes your study sessions to provide actionable insights into your focus and distraction patterns, empowering you to optimize your learning environment.
-                                </p>
-</div>
-<div class="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-6 p-0">
-<div class="flex flex-1 gap-4 rounded-xl border border-[#343465]/50 bg-[#1a1a32]/50 p-6 flex-col backdrop-blur-sm hover:border-primary transition-all duration-300 transform hover:-translate-y-1">
-<div class="text-primary">
-<span class="material-symbols-outlined" style="font-size: 32px;">visibility</span>
-</div>
-<div class="flex flex-col gap-1">
-<h2 class="text-white text-xl font-bold leading-tight">AI Computer Vision</h2>
-<p class="text-[#9393c8] text-base font-normal leading-normal">
-                                            Our AI analyzes your study sessions to provide insights into your focus and distraction patterns, helping you understand where you can improve.
-                                        </p>
-</div>
-</div>
-<div class="flex flex-1 gap-4 rounded-xl border border-[#343465]/50 bg-[#1a1a32]/50 p-6 flex-col backdrop-blur-sm hover:border-primary transition-all duration-300 transform hover:-translate-y-1">
-<div class="text-primary">
-<span class="material-symbols-outlined" style="font-size: 32px;">event_available</span>
-</div>
-<div class="flex flex-col gap-1">
-<h2 class="text-white text-xl font-bold leading-tight">Study Planner Integration</h2>
-<p class="text-[#9393c8] text-base font-normal leading-normal">
-                                            The AI insights are integrated into a smart study planner to create effective schedules tailored to your unique learning style and goals.
-                                        </p>
-</div>
-</div>
-<div class="flex flex-1 gap-4 rounded-xl border border-[#343465]/50 bg-[#1a1a32]/50 p-6 flex-col backdrop-blur-sm hover:border-primary transition-all duration-300 transform hover:-translate-y-1">
-<div class="text-primary">
-<span class="material-symbols-outlined" style="font-size: 32px;">school</span>
-</div>
-<div class="flex flex-col gap-1">
-<h2 class="text-white text-xl font-bold leading-tight">For Ambitious Students and Professionals</h2>
-<p class="text-[#9393c8] text-base font-normal leading-normal">
-                                            Whether you're a university student, a remote worker, or a lifelong learner, Study Coach is designed to help you succeed.
-                                        </p>
-</div>
-</div>
-</div>
-</div>
-</section>
-<div class="px-4 md:px-10 py-20">
-<div class="@container">
-<div class="flex flex-col justify-end gap-6 py-10 @[480px]:gap-8 @[480px]:py-20 bg-[#1a1a32]/30 rounded-xl">
-<div class="flex flex-col gap-2 text-center">
-<h1 class="text-white tracking-tighter text-4xl md:text-5xl font-black leading-tight max-w-3xl mx-auto">
-                                        Ready to Revolutionize Your Work?
+    <div class="relative flex h-auto min-h-screen w-full flex-col overflow-x-hidden">
+        <div class="layout-container flex h-full grow flex-col">
+            <div class="flex flex-1 justify-center">
+                <div class="layout-content-container flex flex-col max-w-[960px] flex-1">
+                    <header
+                        class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#242447] px-10 py-3 fixed top-0 left-0 right-0 z-50 bg-background-dark/80 backdrop-blur-sm">
+                        <div class="flex items-center gap-4 text-white">
+                            <div class="text-primary">
+                                <span class="material-symbols-outlined" style="font-size: 24px;">auto_awesome</span>
+                            </div>
+                            <h2 class="text-white text-lg font-bold leading-tight tracking-[-0.015em]">Study Coach</h2>
+                        </div>
+                        <div class="flex flex-1 justify-end gap-8">
+                            <div class="hidden md:flex items-center gap-9">
+                                <a class="text-white text-sm font-medium leading-normal hover:text-primary transition-colors"
+                                    href="#features">Features</a>
+                                <a class="text-white text-sm font-medium leading-normal hover:text-primary transition-colors"
+                                    href="#">About</a>
+                                <a class="text-white text-sm font-medium leading-normal hover:text-primary transition-colors"
+                                    href="#">Pricing</a>
+                            </div>
+                            <button
+                                class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition-colors">
+                                <span class="truncate">Sign Up</span>
+                            </button>
+                        </div>
+                    </header>
+                    <main class="mt-20">
+                        <div class="px-4 md:px-10 py-5">
+                            <div class="@container">
+                                <div class="@[480px]:p-4">
+                                    <div class="flex min-h-[calc(100vh-120px)] flex-col gap-6 bg-cover bg-center bg-no-repeat @[480px]:gap-8 items-center justify-center p-4 relative"
+                                        data-alt="Abstract 3D rendering of a neural network structure in vibrant blue and purple hues on a dark background.">
+                                        <div
+                                            class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1593349480504-802c09f38e38?q=80&amp;w=2670&amp;auto=format&amp;fit=crop&amp;ixlib=rb-4.0.3&amp;ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')] bg-cover bg-center opacity-20">
+                                        </div>
+                                        <div class="flex flex-col gap-2 text-center z-10">
+                                            <h1
+                                                class="text-white text-4xl md:text-6xl font-black leading-tight tracking-tighter">
+                                                Unlock Your Full Potential with AI-Powered Study Habits.
+                                            </h1>
+                                            <h2
+                                                class="text-[#eaeaea] text-base md:text-xl font-normal leading-normal max-w-2xl mx-auto">
+                                                Analyze your focus. Optimize your learning. Achieve your goals.
+                                            </h2>
+                                        </div>
+                                        <div class="flex-wrap gap-4 flex justify-center z-10">
+                                            <button
+                                                class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-12 px-6 bg-primary text-white text-base font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition-all duration-300 transform hover:scale-105 shadow-[0_0_20px_theme(colors.primary)]">
+                                                <span class="truncate">Start Your Free Trial</span>
+                                            </button>
+                                            <button
+                                                class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-12 px-6 bg-white/10 text-white text-base font-bold leading-normal tracking-[0.015em] border border-white/20 hover:bg-white/20 transition-colors">
+                                                <span class="truncate">See How It Works</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <section class="px-4 md:px-10 py-20" id="features">
+                            <div class="flex flex-col gap-10 @container">
+                                <div class="flex flex-col gap-4 text-center">
+                                    <h1
+                                        class="text-white tracking-tighter text-4xl md:text-5xl font-black leading-tight max-w-3xl mx-auto">
+                                        See Your Focus in a New Light.
                                     </h1>
-</div>
-<div class="flex flex-1 justify-center mt-4">
-<div class="flex justify-center">
-<button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-12 px-6 bg-primary text-white text-base font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition-all duration-300 transform hover:scale-105 shadow-[0_0_20px_theme(colors.primary)]">
-<span class="truncate">Get Started Now</span>
-</button>
-</div>
-</div>
-</div>
-</div>
-</div>
-</main>
-<footer class="flex flex-col gap-6 px-5 py-10 text-center @container border-t border-solid border-b-[#242447]">
-<div class="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 @[480px]:flex-row @[480px]:justify-around">
-<a class="text-[#9393c8] text-sm font-normal leading-normal min-w-40 hover:text-white" href="#">Terms of Service</a>
-<a class="text-[#9393c8] text-sm font-normal leading-normal min-w-40 hover:text-white" href="#">Privacy Policy</a>
-</div>
-<div class="flex flex-wrap justify-center gap-6">
-<a class="text-[#9393c8] hover:text-white transition-colors" href="#">
-<svg class="w-6 h-6" fill="currentColor" viewbox="0 0 24 24"><path d="M22.675 0h-21.35c-.732 0-1.325.593-1.325 1.325v21.351c0 .731.593 1.324 1.325 1.324h11.495v-9.294h-3.128v-3.622h3.128v-2.671c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12v9.293h6.116c.73 0 1.323-.593 1.323-1.325v-21.35c0-.732-.593-1.325-1.323-1.325z"></path></svg>
-</a>
-<a class="text-[#9393c8] hover:text-white transition-colors" href="#">
-<svg class="w-6 h-6" fill="currentColor" viewbox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-.424.727-.666 1.581-.666 2.477 0 1.921.93 3.615 2.348 4.608-.86-.027-1.67-.265-2.38-.654v.052c0 2.68 1.905 4.912 4.426 5.42-.463.125-.951.192-1.455.192-.355 0-.702-.034-1.045-.098.704 2.193 2.748 3.79 5.174 3.833-1.893 1.483-4.28 2.366-6.872 2.366-.447 0-.89-.026-1.326-.077 2.449 1.57 5.357 2.48 8.49 2.48 10.183 0 15.763-8.435 15.485-15.795.955-.69 1.782-1.554 2.44-2.54z"></path></svg>
-</a>
-<a class="text-[#9393c8] hover:text-white transition-colors" href="#">
-<svg class="w-6 h-6" fill="currentColor" viewbox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.162 6.162 6.162 6.162-2.759 6.162-6.162-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4s1.791-4 4-4 4 1.79 4 4-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44 1.441-.645 1.441-1.44-.645-1.44-1.441-1.44z"></path></svg>
-</a>
-</div>
-<p class="text-[#9393c8] text-sm font-normal leading-normal">© 2023 Study Coach. All rights reserved.</p>
-</footer>
-</div>
-</div>
-</div>
-</div>
-</body></html>
+                                    <p class="text-[#eaeaea] text-lg font-normal leading-normal max-w-3xl mx-auto">
+                                        Our AI analyzes your study sessions to provide actionable insights into your
+                                        focus and distraction patterns, empowering you to optimize your learning
+                                        environment.
+                                    </p>
+                                </div>
+                                <div class="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-6 p-0">
+                                    <div
+                                        class="flex flex-1 gap-4 rounded-xl border border-[#343465]/50 bg-[#1a1a32]/50 p-6 flex-col backdrop-blur-sm hover:border-primary transition-all duration-300 transform hover:-translate-y-1">
+                                        <div class="text-primary">
+                                            <span class="material-symbols-outlined"
+                                                style="font-size: 32px;">visibility</span>
+                                        </div>
+                                        <div class="flex flex-col gap-1">
+                                            <h2 class="text-white text-xl font-bold leading-tight">AI Computer Vision
+                                            </h2>
+                                            <p class="text-[#9393c8] text-base font-normal leading-normal">
+                                                Our AI analyzes your study sessions to provide insights into your focus
+                                                and distraction patterns, helping you understand where you can improve.
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div
+                                        class="flex flex-1 gap-4 rounded-xl border border-[#343465]/50 bg-[#1a1a32]/50 p-6 flex-col backdrop-blur-sm hover:border-primary transition-all duration-300 transform hover:-translate-y-1">
+                                        <div class="text-primary">
+                                            <span class="material-symbols-outlined"
+                                                style="font-size: 32px;">event_available</span>
+                                        </div>
+                                        <div class="flex flex-col gap-1">
+                                            <h2 class="text-white text-xl font-bold leading-tight">Study Planner
+                                                Integration</h2>
+                                            <p class="text-[#9393c8] text-base font-normal leading-normal">
+                                                The AI insights are integrated into a smart study planner to create
+                                                effective schedules tailored to your unique learning style and goals.
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div
+                                        class="flex flex-1 gap-4 rounded-xl border border-[#343465]/50 bg-[#1a1a32]/50 p-6 flex-col backdrop-blur-sm hover:border-primary transition-all duration-300 transform hover:-translate-y-1">
+                                        <div class="text-primary">
+                                            <span class="material-symbols-outlined"
+                                                style="font-size: 32px;">school</span>
+                                        </div>
+                                        <div class="flex flex-col gap-1">
+                                            <h2 class="text-white text-xl font-bold leading-tight">For Ambitious
+                                                Students and Professionals</h2>
+                                            <p class="text-[#9393c8] text-base font-normal leading-normal">
+                                                Whether you're a university student, a remote worker, or a lifelong
+                                                learner, Study Coach is designed to help you succeed.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                        <div class="px-4 md:px-10 py-20">
+                            <div class="@container">
+                                <div
+                                    class="flex flex-col justify-end gap-6 py-10 @[480px]:gap-8 @[480px]:py-20 bg-[#1a1a32]/30 rounded-xl">
+                                    <div class="flex flex-col gap-2 text-center">
+                                        <h1
+                                            class="text-white tracking-tighter text-4xl md:text-5xl font-black leading-tight max-w-3xl mx-auto">
+                                            Ready to Revolutionize Your Work?
+                                        </h1>
+                                    </div>
+                                    <div class="flex flex-1 justify-center mt-4">
+                                        <div class="flex justify-center">
+                                            <button
+                                                class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-12 px-6 bg-primary text-white text-base font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition-all duration-300 transform hover:scale-105 shadow-[0_0_20px_theme(colors.primary)]">
+                                                <span class="truncate">Get Started Now</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </main>
+                    <footer
+                        class="flex flex-col gap-6 px-5 py-10 text-center @container border-t border-solid border-b-[#242447]">
+                        <div
+                            class="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 @[480px]:flex-row @[480px]:justify-around">
+                            <a class="text-[#9393c8] text-sm font-normal leading-normal min-w-40 hover:text-white"
+                                href="#">Terms of Service</a>
+                            <a class="text-[#9393c8] text-sm font-normal leading-normal min-w-40 hover:text-white"
+                                href="#">Privacy Policy</a>
+                        </div>
+                        <div class="flex flex-wrap justify-center gap-6">
+                            <a class="text-[#9393c8] hover:text-white transition-colors" href="#">
+                                <svg class="w-6 h-6" fill="currentColor" viewbox="0 0 24 24">
+                                    <path
+                                        d="M22.675 0h-21.35c-.732 0-1.325.593-1.325 1.325v21.351c0 .731.593 1.324 1.325 1.324h11.495v-9.294h-3.128v-3.622h3.128v-2.671c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12v9.293h6.116c.73 0 1.323-.593 1.323-1.325v-21.35c0-.732-.593-1.325-1.323-1.325z">
+                                    </path>
+                                </svg>
+                            </a>
+                            <a class="text-[#9393c8] hover:text-white transition-colors" href="#">
+                                <svg class="w-6 h-6" fill="currentColor" viewbox="0 0 24 24">
+                                    <path
+                                        d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-.424.727-.666 1.581-.666 2.477 0 1.921.93 3.615 2.348 4.608-.86-.027-1.67-.265-2.38-.654v.052c0 2.68 1.905 4.912 4.426 5.42-.463.125-.951.192-1.455.192-.355 0-.702-.034-1.045-.098.704 2.193 2.748 3.79 5.174 3.833-1.893 1.483-4.28 2.366-6.872 2.366-.447 0-.89-.026-1.326-.077 2.449 1.57 5.357 2.48 8.49 2.48 10.183 0 15.763-8.435 15.485-15.795.955-.69 1.782-1.554 2.44-2.54z">
+                                    </path>
+                                </svg>
+                            </a>
+                            <a class="text-[#9393c8] hover:text-white transition-colors" href="#">
+                                <svg class="w-6 h-6" fill="currentColor" viewbox="0 0 24 24">
+                                    <path
+                                        d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.162 6.162 6.162 6.162-2.759 6.162-6.162-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4s1.791-4 4-4 4 1.79 4 4-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44 1.441-.645 1.441-1.44-.645-1.44-1.441-1.44z">
+                                    </path>
+                                </svg>
+                            </a>
+                        </div>
+                        <p class="text-[#9393c8] text-sm font-normal leading-normal">© 2025 Study Coach. All rights
+                            reserved.</p>
+                    </footer>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

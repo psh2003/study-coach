@@ -88,6 +88,24 @@ CREATE POLICY "Users can update their own focus sessions"
     ON focus_sessions FOR UPDATE
     USING (auth.uid() = user_id);
 
-CREATE POLICY "Users can delete their own focus sessions"
-    ON focus_sessions FOR DELETE
     USING (auth.uid() = user_id);
+
+-- User Badges table
+CREATE TABLE IF NOT EXISTS user_badges (
+    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+    badge_code TEXT NOT NULL,
+    earned_at TIMESTAMPTZ DEFAULT NOW(),
+    PRIMARY KEY (user_id, badge_code)
+);
+
+CREATE INDEX IF NOT EXISTS user_badges_user_id_idx ON user_badges(user_id);
+
+ALTER TABLE user_badges ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view their own badges"
+    ON user_badges FOR SELECT
+    USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can insert their own badges"
+    ON user_badges FOR INSERT
+    WITH CHECK (auth.uid() = user_id);
