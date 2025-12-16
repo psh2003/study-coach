@@ -70,7 +70,7 @@ export class ObjectDetectorProcessor {
 
     return result.detections.some(detection =>
       detection.categories.some(category =>
-        category.categoryName === 'person' && category.score > 0.25
+        category.categoryName === 'person' && category.score > 0.5
       )
     )
   }

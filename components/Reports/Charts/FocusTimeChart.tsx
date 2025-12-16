@@ -10,11 +10,23 @@ interface FocusTimeChartProps {
 }
 
 export default function FocusTimeChart({ data }: FocusTimeChartProps) {
-  const chartData = data.map(item => ({
-    date: format(new Date(item.date), 'MM/dd'),
-    시간: Math.round(item.totalMinutes / 60 * 10) / 10, // Convert to hours
-    세션수: item.sessionCount,
-  }))
+  const chartData = data.map(item => {
+    let label = item.label
+    // Try format if it looks like a date (YYYY-MM-DD)
+    if (item.label.includes('-') && item.label.length === 10) {
+      try {
+        label = format(new Date(item.label), 'MM/dd')
+      } catch (e) {
+        console.error('Date format error', e)
+      }
+    }
+
+    return {
+      date: label,
+      시간: Math.round(item.totalMinutes / 60 * 10) / 10, // Convert to hours
+      세션수: item.sessionCount,
+    }
+  })
 
   return (
     <motion.div

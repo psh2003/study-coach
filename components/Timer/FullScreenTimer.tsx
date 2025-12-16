@@ -63,42 +63,11 @@ export default function FullScreenTimer() {
 
   // ...
 
-  const handleComplete = useCallback(async () => {
-    setIsSaving(true)
-    try {
-      // Save session data
-      if (elapsedTime > 0) {
-        await saveSession(elapsedTime)
-
-        // Check for new badges
-        const { data: { user } } = await import('@/lib/supabase/client').then(m => m.supabase.auth.getUser())
-        if (user) {
-          const { gamificationRepository } = await import('@/lib/repositories/gamificationRepository')
-          const unlockedBadges = await gamificationRepository.checkAndUnlockBadges(user.id, elapsedTime)
-
-          if (unlockedBadges.length > 0) {
-            setNewBadges(unlockedBadges)
-            // Delay completion slightly to show badge if needed, or handle in UI overlay
-            // For now, we'll just log it and maybe show an alert before redirecting
-            // Ideally, we should show a modal. Let's use a simple alert for MVP or state to show modal.
-            // But since completeSession clears state, we might lose it.
-            // Better approach: Show modal first, then complete session on modal close.
-            // But completeSession is called immediately here.
-
-            // Let's just alert for now as a simple feedback
-            const badgeNames = unlockedBadges.map(b => b.name).join(', ')
-            alert(`🎉 축하합니다! 새로운 배지를 획득했습니다: ${badgeNames}`)
-          }
-        }
-      }
-      completeSession()
-    } catch (error) {
-      console.error('Failed to save session:', error)
-      completeSession()
-    } finally {
-      setIsSaving(false)
-    }
-  }, [completeSession, saveSession, elapsedTime])
+  const handleComplete = useCallback(() => {
+    // Just switch mode to 'completed' to show the modal
+    // Actual saving and badge checking happens in CompletionModal
+    completeSession()
+  }, [completeSession])
 
   const handleExit = useCallback(() => {
     if (confirm('집중 세션을 종료하시겠습니까?')) {

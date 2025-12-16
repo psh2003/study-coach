@@ -28,7 +28,8 @@ export default function MinimizedAICoach() {
     detectionInterval: 1000,
     postureThreshold: 10,
     phoneThreshold: 3,
-    absenceThreshold: 4, // Adjusted to 4s as per user request
+    absenceThreshold: 2, // 2s for faster demo reaction
+    drowsinessThreshold: 2, // Faster detection for demo
   })
 
   const [alerts, setAlerts] = useState<Alert[]>([])

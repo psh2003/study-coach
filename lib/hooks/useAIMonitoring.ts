@@ -86,8 +86,54 @@ export function useAIMonitoring(options: AIMonitoringOptions) {
     }
   }, [])
 
+  // Ref for latest state/options to avoid recreating runDetection
+  const stateRef = useRef({
+    enabled,
+    isWebcamActive,
+    postureThreshold,
+    phoneThreshold,
+    absenceThreshold,
+    drowsinessThreshold,
+    postureWarning,
+    phoneWarning,
+    absenceWarning,
+    drowsinessWarning,
+    setPostureWarning,
+    setPhoneWarning,
+    setAbsenceWarning,
+    setDrowsinessWarning
+  })
+
+  // Update ref on every render
+  useEffect(() => {
+    stateRef.current = {
+      enabled,
+      isWebcamActive,
+      postureThreshold,
+      phoneThreshold,
+      absenceThreshold,
+      drowsinessThreshold,
+      postureWarning,
+      phoneWarning,
+      absenceWarning,
+      drowsinessWarning,
+      setPostureWarning,
+      setPhoneWarning,
+      setAbsenceWarning,
+      setDrowsinessWarning
+    }
+  }, [
+    enabled, isWebcamActive,
+    postureThreshold, phoneThreshold, absenceThreshold, drowsinessThreshold,
+    postureWarning, phoneWarning, absenceWarning, drowsinessWarning,
+    setPostureWarning, setPhoneWarning, setAbsenceWarning, setDrowsinessWarning
+  ])
+
   const runDetection = useCallback(async () => {
-    if (!videoRef.current || !enabled || !isWebcamActive) return
+    // Access latest state from ref
+    const state = stateRef.current
+
+    if (!videoRef.current || !state.enabled || !state.isWebcamActive) return
 
     const now = Date.now()
     // Throttle detection to ~10fps or detectionInterval
@@ -95,10 +141,18 @@ export function useAIMonitoring(options: AIMonitoringOptions) {
       requestRef.current = requestAnimationFrame(runDetection)
       return
     }
+    const prevTime = lastDetectionTimeRef.current || now // If 0, use now to avoid large delta
     lastDetectionTimeRef.current = now
 
     // MediaPipe requires timestamp in ms
     const timestamp = performance.now()
+
+    // Calculate Delta Time in seconds
+    // If this is the first run, assume small delta (e.g., 0.1s)
+    const deltaTime = (now - prevTime) / 1000
+
+    // Cap deltaTime to avoid huge jumps if lag spike (max 0.5s)
+    const dt = Math.min(deltaTime, 0.5)
 
     // 1. Detect Pose
     const poseResult = poseProcessor.detectPose(videoRef.current, timestamp)
@@ -113,30 +167,30 @@ export function useAIMonitoring(options: AIMonitoringOptions) {
 
     // Posture Check
     const isBadPosture = poseProcessor.isTurtleNeck(poseResult)
-    // console.log('Posture Check:', { isBadPosture, counter: postureCounterRef.current })
+    // console.log('Posture Check:', { isBadPosture, counter: postureCounterRef.current, dt })
     if (isBadPosture) {
-      postureCounterRef.current += 0.1 // Increment by time (approx 100ms)
+      postureCounterRef.current += dt
     } else {
-      postureCounterRef.current = Math.max(0, postureCounterRef.current - 0.1)
+      postureCounterRef.current = Math.max(0, postureCounterRef.current - dt)
     }
 
     // Drowsiness Check (Eyes Closed)
     // Only check if face is detected. If no face, don't increment drowsiness.
     const isEyesClosed = faceProcessor.isEyesClosed(faceResult)
     if (isEyesClosed) {
-      drowsinessCounterRef.current += 0.1
-      console.log('Eyes Closed detected:', { counter: drowsinessCounterRef.current })
+      drowsinessCounterRef.current += dt
+      console.log('Eyes Closed detected:', { counter: drowsinessCounterRef.current, dt })
     } else {
-      drowsinessCounterRef.current = Math.max(0, drowsinessCounterRef.current - 0.1)
+      drowsinessCounterRef.current = Math.max(0, drowsinessCounterRef.current - dt)
     }
 
     // Phone Check
     const isPhoneVisible = objectDetector.isPhoneVisible(objectResult)
     // console.log('Phone Check:', { isPhoneVisible, counter: phoneCounterRef.current })
     if (isPhoneVisible) {
-      phoneCounterRef.current += 0.1
+      phoneCounterRef.current += dt
     } else {
-      phoneCounterRef.current = Math.max(0, phoneCounterRef.current - 0.1)
+      phoneCounterRef.current = Math.max(0, phoneCounterRef.current - dt)
     }
 
     // Absence Check
@@ -148,51 +202,36 @@ export function useAIMonitoring(options: AIMonitoringOptions) {
     const isAbsent = isPoseAbsent && !isPersonObjectDetected
 
     if (isAbsent) {
-      absenceCounterRef.current += 0.1
+      absenceCounterRef.current += dt
       // console.log('Absence detected:', { isPoseAbsent, isPersonObjectDetected, counter: absenceCounterRef.current })
     } else {
-      absenceCounterRef.current = Math.max(0, absenceCounterRef.current - 0.5) // Recover faster
+      absenceCounterRef.current = Math.max(0, absenceCounterRef.current - (dt * 2)) // Recover slower (2x) to prevent flickering
     }
     // console.log('Absence Check:', { isAbsent, counter: absenceCounterRef.current })
 
     // Trigger Warnings
-    if (postureCounterRef.current > postureThreshold && !postureWarning) {
+    if (postureCounterRef.current > state.postureThreshold && !state.postureWarning) {
       // console.log('Triggering Posture Warning')
-      setPostureWarning(true)
+      state.setPostureWarning(true)
     }
 
-    if (drowsinessCounterRef.current > drowsinessThreshold && !drowsinessWarning) {
+    if (drowsinessCounterRef.current > state.drowsinessThreshold && !state.drowsinessWarning) {
       console.log('Triggering Drowsiness Warning')
-      setDrowsinessWarning(true)
+      state.setDrowsinessWarning(true)
     }
 
-    if (phoneCounterRef.current > phoneThreshold && !phoneWarning) {
+    if (phoneCounterRef.current > state.phoneThreshold && !state.phoneWarning) {
       // console.log('Triggering Phone Warning')
-      setPhoneWarning(true)
+      state.setPhoneWarning(true)
     }
 
-    if (absenceCounterRef.current > absenceThreshold && !absenceWarning) {
+    if (absenceCounterRef.current > state.absenceThreshold && !state.absenceWarning) {
       // console.log('Triggering Absence Warning', { counter: absenceCounterRef.current, threshold: absenceThreshold })
-      setAbsenceWarning(true)
+      state.setAbsenceWarning(true)
     }
 
     requestRef.current = requestAnimationFrame(runDetection)
-  }, [
-    enabled,
-    isWebcamActive,
-    postureThreshold,
-    phoneThreshold,
-    absenceThreshold,
-    drowsinessThreshold,
-    postureWarning,
-    phoneWarning,
-    absenceWarning,
-    drowsinessWarning,
-    setPostureWarning,
-    setPhoneWarning,
-    setAbsenceWarning,
-    setDrowsinessWarning,
-  ])
+  }, []) // Empty dependency array!
 
   // Start/Stop monitoring loop
   useEffect(() => {

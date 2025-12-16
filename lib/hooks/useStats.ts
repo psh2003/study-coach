@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { statsRepository } from '@/lib/repositories/statsRepository'
-import { subDays, startOfWeek, endOfWeek, startOfMonth, endOfMonth } from 'date-fns'
+import { startOfDay, endOfDay, subDays, startOfWeek, endOfWeek, startOfMonth, endOfMonth } from 'date-fns'
 
 export type DateRangeType = 'daily' | 'weekly' | 'monthly'
 
@@ -54,8 +54,8 @@ function getDefaultDateRange(type: DateRangeType) {
   switch (type) {
     case 'daily':
       return {
-        start: subDays(now, 6), // Last 7 days
-        end: now,
+        start: startOfDay(now),
+        end: endOfDay(now),
       }
     case 'weekly':
       return {

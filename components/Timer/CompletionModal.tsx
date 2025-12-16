@@ -6,7 +6,8 @@ import { CheckCircle, Coffee, Repeat } from 'lucide-react'
 import { useTimerStore, type TimerSession } from '@/lib/store/useTimerStore'
 import { useFocusSession } from '@/lib/hooks/useFocusSession'
 import { useFocusStore } from '@/lib/store/useFocusStore'
-import { useState } from 'react'
+import { usePlannerStore } from '@/lib/store/usePlannerStore'
+import { useState, useEffect } from 'react'
 
 interface CompletionModalProps {
   session: TimerSession
@@ -18,7 +19,16 @@ export default function CompletionModal({ session, onClose }: CompletionModalPro
   const { startQuickFocus, endSession } = useTimerStore()
   const { saveSession } = useFocusSession()
   const { distractions } = useFocusStore()
+  const { updateTask, tasks } = usePlannerStore()
   const [isSaving, setIsSaving] = useState(false)
+  const [isTaskCompleted, setIsTaskCompleted] = useState(false)
+
+  // Auto-check if elapsed time met the goal
+  useEffect(() => {
+    if (session.taskId && session.elapsed >= session.duration) {
+      setIsTaskCompleted(true)
+    }
+  }, [session.taskId, session.elapsed, session.duration])
 
   const formatTime = (seconds: number) => {
     const hours = Math.floor(seconds / 3600)
@@ -45,6 +55,37 @@ export default function CompletionModal({ session, onClose }: CompletionModalPro
 
   const handleFinish = async () => {
     await handleSave()
+
+    // Update task status if checked and taskId exists
+    if (session.taskId) {
+      // Fetch latest task data directly from Supabase to ensure we have the correct actual_time
+      const { data: taskData, error: fetchError } = await import('@/lib/supabase/client').then(m => m.supabase
+        .from('tasks')
+        .select('actual_time, is_done')
+        .eq('id', session.taskId)
+        .single()
+      )
+
+      if (!fetchError && taskData) {
+        const currentActualTime = taskData.actual_time || 0
+        // Round to nearest minute, but ensure at least 1 minute if elapsed > 0
+        const addedMinutes = session.elapsed > 0
+          ? Math.max(1, Math.round(session.elapsed / 60))
+          : 0
+
+        const updates: any = {
+          actual_time: currentActualTime + addedMinutes
+        }
+
+        // Only set is_done to true if user checked it, or if it was already done
+        if (isTaskCompleted) {
+          updates.is_done = true
+        }
+
+        await updateTask(session.taskId, updates)
+      }
+    }
+
     endSession()
     router.push('/dashboard')
   }
@@ -67,6 +108,27 @@ export default function CompletionModal({ session, onClose }: CompletionModalPro
       console.log('Calling saveSession with:', session.elapsed, session.taskId, session.startTime)
       await saveSession(session.elapsed, session.taskId, session.startTime)
       console.log('Session saved successfully')
+
+      // Check for new badges immediately after saving
+      const { data: { user } } = await import('@/lib/supabase/client').then(m => m.supabase.auth.getUser())
+      if (user) {
+        const { gamificationRepository } = await import('@/lib/repositories/gamificationRepository')
+        const unlockedBadges = await gamificationRepository.checkAndUnlockBadges(user.id, session.elapsed)
+
+        if (unlockedBadges.length > 0) {
+          // Show alert for badges (or could update UI state to show badge modal)
+          // For now, using a nice alert or just letting the user know in the modal wouldn't work well 
+          // because we are navigating away or closing.
+          // Since we are inside the modal, we could flash the badges!
+          // But handleSave is called right before closing/navigating.
+
+          // Let's use window.alert for immediate feedback before navigation, 
+          // OR better: set a global state or simple alert
+          const badgeNames = unlockedBadges.map(b => b.name).join(', ')
+          alert(`🎉 축하합니다! 새로운 배지를 획득했습니다: ${badgeNames}`)
+        }
+      }
+
     } catch (error) {
       console.error('Failed to save session:', error)
     } finally {
@@ -179,6 +241,14 @@ export default function CompletionModal({ session, onClose }: CompletionModalPro
             <Repeat className="w-5 h-5" />
             계속 집중
           </button>
+
+          <div className="flex items-center gap-2 p-3 bg-[#1A1A1A] rounded-xl border border-[#A3A3A3]/20 mb-4 cursor-pointer hover:border-[#52FF86]/50 transition-colors" onClick={() => setIsTaskCompleted(!isTaskCompleted)}>
+            <div className={`w-5 h-5 rounded-md border flex items-center justify-center transition-colors ${isTaskCompleted ? 'bg-[#52FF86] border-[#52FF86]' : 'border-[#A3A3A3]/50'
+              }`}>
+              {isTaskCompleted && <CheckCircle className="w-3.5 h-3.5 text-[#0D0D0D]" />}
+            </div>
+            <span className="text-sm text-[#F5F5F5] select-none">이 할 일 완료 처리하기</span>
+          </div>
 
           <button
             onClick={handleFinish}

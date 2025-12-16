@@ -2,7 +2,7 @@ import { supabase } from '@/lib/supabase/client'
 import { startOfDay, endOfDay, format, subDays } from 'date-fns'
 
 export interface DailyFocusStat {
-  date: string
+  label: string // date (YYYY-MM-DD) or hour (HH:00)
   totalMinutes: number
   sessionCount: number
 }
@@ -66,7 +66,7 @@ export const statsRepository = {
       const stats = grouped.get(dateKey) || { totalMinutes: 0, count: 0 }
 
       result.push({
-        date: dateKey,
+        label: dateKey,
         totalMinutes: stats.totalMinutes,
         sessionCount: stats.count,
       })
@@ -75,6 +75,48 @@ export const statsRepository = {
     }
 
     return result
+  },
+
+  /**
+   * Get hourly focus time for a specific date (00:00 to 23:59)
+   */
+  async getHourlyFocusTime(date: Date): Promise<DailyFocusStat[]> {
+    const start = startOfDay(date)
+    const end = endOfDay(date)
+
+    const { data: sessions, error } = await supabase
+      .from('focus_sessions')
+      .select('start_time, duration')
+      .gte('start_time', start.toISOString())
+      .lte('start_time', end.toISOString())
+      .order('start_time')
+
+    if (error) throw error
+
+    // Initialize 0-23 hours
+    const hourly = new Map<number, { totalMinutes: number; count: number }>()
+    for (let i = 0; i < 24; i++) {
+      hourly.set(i, { totalMinutes: 0, count: 0 })
+    }
+
+    ; (sessions as any[])?.forEach((session) => {
+      const sessionStart = new Date(session.start_time)
+      const hour = sessionStart.getHours() // 0-23
+      const existing = hourly.get(hour) || { totalMinutes: 0, count: 0 }
+
+      hourly.set(hour, {
+        totalMinutes: existing.totalMinutes + session.duration,
+        count: existing.count + 1,
+      })
+    })
+
+    return Array.from(hourly.entries())
+      .sort(([a], [b]) => a - b)
+      .map(([hour, stats]) => ({
+        label: `${hour.toString().padStart(2, '0')}:00`,
+        totalMinutes: stats.totalMinutes,
+        sessionCount: stats.count,
+      }))
   },
 
   /**
@@ -201,17 +243,19 @@ export const statsRepository = {
    * Get summary statistics
    */
   async getSummaryStats(startDate: Date, endDate: Date) {
+    const isSameDay = format(startDate, 'yyyy-MM-dd') === format(endDate, 'yyyy-MM-dd')
+
     const [dailyStats, distractionStats, categoryStats, achievementStats] = await Promise.all([
-      this.getDailyFocusTime(startDate, endDate),
+      isSameDay ? this.getHourlyFocusTime(startDate) : this.getDailyFocusTime(startDate, endDate),
       this.getDistractionStats(startDate, endDate),
       this.getCategoryStats(startDate, endDate),
       this.getAchievementStats(startDate, endDate),
     ])
 
-    const totalMinutes = dailyStats.reduce((sum, day) => sum + day.totalMinutes, 0)
-    const totalSessions = dailyStats.reduce((sum, day) => sum + day.sessionCount, 0)
+    const totalMinutes = dailyStats.reduce((sum: number, day: DailyFocusStat) => sum + day.totalMinutes, 0)
+    const totalSessions = dailyStats.reduce((sum: number, day: DailyFocusStat) => sum + day.sessionCount, 0)
     const avgSessionTime = totalSessions > 0 ? totalMinutes / totalSessions : 0
-    const totalDistractions = distractionStats.reduce((sum, d) => sum + d.count, 0)
+    const totalDistractions = distractionStats.reduce((sum: number, d: DistractionStat) => sum + d.count, 0)
 
     return {
       totalMinutes,
