@@ -31,6 +31,11 @@ AI 컴퓨터 비전 기술을 활용하여 사용자의 학습 및 업무 습관
 - 집중 성공률 분석 (세션 당 방해 횟수 기반)
 - 방해 요인 분포 및 과목별 집중도 분석
 
+### 5. 게이미피케이션 (GMF-500)
+- **스트릭(Streak)**: 연속 학습일 계산 및 시각화 (3단계 불꽃 애니메이션)
+- **배지 시스템**: 다양한 학습 목표 달성 시 배지 획득 및 축하 알림
+- **동기 부여**: '첫 걸음', '작심삼일 돌파', '집중의 시작' 등 단계별 보상 제공
+
 ## 기술 스택
 
 ### Frontend
@@ -134,6 +139,7 @@ study-coach/
 │   ├── repositories/             # 데이터 접근 계층
 │   │   ├── focusRepository.ts
 │   │   ├── statsRepository.ts
+│   │   ├── gamificationRepository.ts
 │   │   └── taskRepository.ts
 │   └── hooks/                    # Custom Hooks
 │       ├── useAIMonitoring.ts
@@ -176,6 +182,13 @@ study-coach/
 - `distractions`: JSONB - 방해 요소 기록
 - `created_at`: TIMESTAMPTZ
 
+### user_badges 테이블
+획득한 배지 정보를 저장하는 테이블
+
+- `user_id`: UUID (Foreign Key → auth.users)
+- `badge_code`: TEXT - 배지 코드
+- `earned_at`: TIMESTAMPTZ - 획득 일시
+
 ## AI 모델 상세
 
 ### 자세 분석 (Pose Detection)
@@ -187,7 +200,7 @@ study-coach/
 - **성능**: ~30 FPS on modern hardware
 
 ### 객체 탐지 (Object Detection)
-- **모델**: COCO-SSD
+- **모델**: MediaPipe Object Detector (EfficientDet-Lite0)
 - **기능**:
   - 80개 클래스 객체 인식
   - 스마트폰 감지 (cell phone class)
